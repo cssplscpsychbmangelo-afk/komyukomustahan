@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* Zero-dependency static server for the SUPERPOWER activity.
+/* Zero-dependency static server for the KOMYU KUMUSTAHAN activity.
    Usage: node serve.js [port]   (default 8000)
    Binds 0.0.0.0 so it works behind a proxy/preview host. */
 'use strict';
@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
 
-const ROOT = path.join(__dirname, 'public');
+const ROOT = __dirname;
 const PORT = Number(process.argv[2] || process.env.PORT || 8000);
 const HOST = '0.0.0.0';
 
@@ -48,7 +48,10 @@ const server = http.createServer((req, res) => {
 
   if (pathname === '/') pathname = '/index.html';
 
-  // resolve inside ROOT only
+  // resolve inside ROOT only, and keep repo internals out of the web root
+  const BLOCKED = /^\/(node_modules|test|tools|\.git)(\/|$)/;
+  if (BLOCKED.test(pathname)) return send(res, 404, 'Not found');
+
   const target = path.join(ROOT, path.normalize(pathname).replace(/^(\.\.[/\\])+/, ''));
   if (!target.startsWith(ROOT)) return send(res, 403, 'Forbidden');
 
@@ -67,5 +70,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`SUPERPOWER running at http://localhost:${PORT} (bound ${HOST})`);
+  console.log(`KOMYU KUMUSTAHAN running at http://localhost:${PORT} (bound ${HOST})`);
 });

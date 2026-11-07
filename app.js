@@ -135,6 +135,18 @@
   }
 
   /* ---------- the three questions ---------- */
+  function restart(opts) {
+    opts = opts || {};
+    Object.assign(chosen, { q1: null, q2: null, q3: null });
+    state.answers = { q1: null, q2: null, q3: null };
+    state.power = null;
+    state.step = 0;
+    advancing = false;
+    save({ answers: null, revealed: false, power: null });
+    applyAccent(null);
+    go('quiz');
+    if (opts.toast) toast(opts.toast);
+  }
   const chosen = { q1: null, q2: null, q3: null };
 
   function renderQuestion() {
@@ -467,11 +479,11 @@
       const svg = await window.EXPORT.buildSvg(p, CARDS, { id: 'export' });
       const slug = p.name.toLowerCase();
       triggerDownload(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }),
-        `superpower-${slug}.svg`);
+        `komyu-kumustahan-${slug}.svg`);
 
       // a PNG as well, because most chat apps won't preview an SVG
       const png = await window.EXPORT.toPng(svg, CARDS.W, CARDS.H, 2);
-      if (png) triggerDownload(png, `superpower-${slug}.png`);
+      if (png) triggerDownload(png, `komyu-kumustahan-${slug}.png`);
 
       toast(`${p.name} saved to your device.`);
     } catch (e) {
@@ -501,7 +513,7 @@
     const url = location.href.split('#')[0];
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'SUPERPOWER', text, url });
+        await navigator.share({ title: 'Komyu Kumustahan', text, url });
         return;
       } catch (e) { /* user cancelled or unsupported */ }
     }
@@ -549,6 +561,7 @@
       Object.assign(chosen, { q1: null, q2: null, q3: null });
       state.answers = { q1: null, q2: null, q3: null };
       state.step = 0;
+      advancing = false;
       save({ answers: null, revealed: false });
       renderQuestion();
       toast('Cleared. Start again whenever you like.');
@@ -561,6 +574,8 @@
     });
 
     $('#btn-to-reflect').addEventListener('click', () => go('reflect'));
+    $('#btn-redo').addEventListener('click', () => restart({ toast: 'Answer again — one different answer can change the card.' }));
+    $('#btn-reflect-redo').addEventListener('click', () => restart({ toast: 'Answer again — one different answer can change the card.' }));
     $('#btn-reflect-back').addEventListener('click', () => go('reveal'));
     $('#btn-to-twist').addEventListener('click', () => {
       go('twist');
@@ -581,13 +596,7 @@
       save({ today: e.target.value });
     });
 
-    $('#btn-again').addEventListener('click', () => {
-      Object.assign(chosen, { q1: null, q2: null, q3: null });
-      state.answers = { q1: null, q2: null, q3: null };
-      state.step = 0;
-      save({ answers: null, revealed: false });
-      go('quiz');
-    });
+    $('#btn-again').addEventListener('click', () => restart());
 
     $('#btn-clear').addEventListener('click', () => {
       if (!window.confirm('Clear your answers and reflections from this browser?')) return;
@@ -630,11 +639,36 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 
-  /* keep the activity working offline. Skipped on file:// where service
-     workers aren't allowed — the page still works, just uncached. */
+  /* ------------------------------------------------------------
+     Stale-build guard.
+
+     GitHub Pages can serve an old index.html for a few minutes after a
+     deploy, which makes the app look "stuck" — same cards, same
+     everything. The page stamps its build id on <html>; if the running
+     service worker disagrees, we reload once so the participant is
+     always on the current build.
+     ------------------------------------------------------------ */
+  const BUILD = document.documentElement.getAttribute('data-build') || 'dev';
+  const RELOAD_KEY = 'superpower.reloaded.' + BUILD;
+
+  function watchBuild(reg) {
+    const worker = reg && (reg.active || reg.waiting || reg.installing);
+    if (!worker) return;
+    const channel = new MessageChannel();
+    channel.port1.onmessage = ev => {
+      if (!ev.data || ev.data.type !== 'build') return;
+      if (ev.data.version === BUILD) return;
+      if (sessionStorage.getItem(RELOAD_KEY)) return;   // never loop
+      sessionStorage.setItem(RELOAD_KEY, '1');
+      location.reload();
+    };
+    try { worker.postMessage({ type: 'which-build' }, [channel.port2]); } catch (e) { /* old worker */ }
+  }
+
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(() => { /* non-fatal */ });
+      navigator.serviceWorker.register('sw.js').then(watchBuild).catch(() => { /* non-fatal */ });
+      navigator.serviceWorker.ready.then(watchBuild).catch(() => { /* non-fatal */ });
     });
   }
 

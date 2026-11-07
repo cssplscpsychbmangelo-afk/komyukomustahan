@@ -1,4 +1,6 @@
-# SUPERPOWER — What Would You Do If You Could?
+# KOMYU KUMUSTAHAN — What Would You Do If You Could?
+
+> **▶ Play it now → [cssplscpsychbmangelo-afk.github.io/komyukomustahan](https://cssplscpsychbmangelo-afk.github.io/komyukomustahan/)**
 
 A kumustahan activity in **10–15 minutes**. Participants answer three questions,
 receive a superpower determined by the *combination* of all three answers, and
@@ -7,6 +9,8 @@ many of us are deprived of things we deserve.
 
 It ends on the twist that matters: **you don't need superpowers to make a difference.**
 
+<img src="assets/deck-all-powers.png" alt="The sixteen superpower cards" width="100%">
+
 - 3 questions × 4 choices = **64 combinations**
 - **16 powers**, each with its own card, sigil, colour and description
 - Nothing leaves the device — no accounts, no analytics, no network calls
@@ -14,42 +18,32 @@ It ends on the twist that matters: **you don't need superpowers to make a differ
 
 ---
 
-## Run it
+## Pages
 
-```bash
-npm install     # only needed for the tests and the font/asset tooling
-npm start       # http://localhost:8000
-```
-
-Or skip npm entirely — it's a static site:
-
-```bash
-python3 -m http.server 8000 --directory public
-```
-
-For a venue with no wifi: copy the `public/` folder to a laptop or USB stick and
-open `index.html`. Everything is local — fonts included.
+| Page | What it is |
+|---|---|
+| **[index.html](index.html)** | The activity itself — opening, three questions, the awakening, the card, the reflection, the twist. |
+| **[gallery.html](gallery.html)** | The full deck, plus a **power lookup** that resolves any of the 64 combinations. |
+| **[guide.html](guide.html)** | Facilitator guide — run sheet, scripts, the mapping table, and notes on holding the room. *(Not linked from the top nav; bookmark it if you're running a session.)* |
 
 ---
 
-## The experience
+## Run it locally
 
-| | |
-|---|---|
-| **1 · Landing** | The premise, the deck, and a welcome-back if you've played before. |
-| **2 · Opening** | The facilitator's spiel, paced for reading aloud. |
-| **3 · Three questions** | One screen per question. Keyboard: `A`–`D` or `1`–`4`. |
-| **4 · Awakening** | A short reveal sequence — runes, weights, then the card. |
-| **5 · Reveal** | The collectible card, the power, the visualisation, the combination that led there. |
-| **6 · Kumustahan** | Four written statements, with a 2-minute timer. Private, saved locally. |
-| **7 · The twist** | *One thing you can already do today, without the power.* Then the closing line. |
+It's a static site — no build step, no dependencies at runtime.
 
-Other pages:
+```bash
+npm start          # http://localhost:8000   (zero-dependency server)
+```
 
-- **`/gallery.html`** — the full deck, plus a **power lookup** so a facilitator can
-  resolve any of the 64 combinations without the formula.
-- **`/guide.html`** — the run sheet, the full script, the mapping table, and notes on
-  holding the room when someone answers honestly about hard things.
+or with anything else:
+
+```bash
+python3 -m http.server 8000
+```
+
+For a venue with no wifi: copy the folder to a laptop or USB stick and open
+`index.html`. Everything is local, fonts included.
 
 ---
 
@@ -61,7 +55,7 @@ Assign `A = 0`, `B = 1`, `C = 2`, `D = 3`, then:
 Power Index = 1 + ((5·Q1 + 3·Q2 + 7·Q3) mod 16)
 ```
 
-The result is a number from 1 to 16, and each number is one of the powers:
+The result is 1–16, and each number is one of the powers:
 
 | # | Power | Domain | # | Power | Domain |
 |---|---|---|---|---|---|
@@ -74,9 +68,25 @@ The result is a number from 1 to 16, and each number is one of the powers:
 | 07 | VERITAS — The Truth Seeker | Truth | 15 | LUMEN — The Hope Keeper | Hope |
 | 08 | IGNIS — The Phoenix Spirit | Resilience | 16 | NOVA — The Reality Shaper | Transformation |
 
-Because the weights all sit on a modulo, the sixteen powers are not equally
-likely: some sit on five combinations, others on three. That's a property of the
-formula, not a bug. `/guide.html` prints the whole mapping.
+Because the weights sit on a modulo, the sixteen powers are not equally likely:
+some sit on five combinations, others on three. That's a property of the formula,
+not a bug. [guide.html](guide.html) prints the whole mapping.
+
+---
+
+## Publishing on GitHub Pages
+
+The app is served **from the repository root**, so Pages works with no extra
+configuration:
+
+1. **Settings → Pages**
+2. Source: **Deploy from a branch**
+3. Branch: **`main`**, folder: **`/ (root)`** → Save
+
+`.nojekyll` is committed so Pages serves the files as-is instead of running them
+through Jekyll (without it, files and folders beginning with `_` are skipped).
+
+Site URL: `https://<user>.github.io/<repo>/`
 
 ---
 
@@ -87,46 +97,55 @@ with the name, epithet, description and domain. The same artwork powers the page
 the gallery, the downloaded card and the printable deck.
 
 - **In the app** — inline SVG, tinted to the power's colour.
-- **Download** — a self-contained SVG *and* a PNG, with the fonts embedded, so the
-  card looks right when it lands in a chat or a slide.
-- **Print** — `gallery.html` prints two cards per row with no page breaks inside a card.
+- **Download** — a self-contained SVG *and* a PNG with fonts embedded, so the card
+  looks right when it lands in a chat or a slide.
+- **Print** — [gallery.html](gallery.html) prints two cards per row with no page
+  breaks inside a card.
 
-Pre-rendered at 760×1064 in [`assets/deck/`](assets/deck) (and
-[`assets/deck-all-powers.png`](assets/deck-all-powers.png) for a single overview).
+Pre-rendered at 760×1064 in [`assets/deck/`](assets/deck);
+[`assets/deck-all-powers.png`](assets/deck-all-powers.png) is the whole deck on one sheet.
 
 ---
 
 ## Project layout
 
 ```
-public/
-  index.html            the activity
-  gallery.html          the 16 powers + power lookup
-  guide.html            facilitator guide
-  superpowers.js        questions, the 16 powers, the reveal math  (data only)
-  sigils.js             one SVG glyph per power
-  cards.js              card renderer (pure string SVG)
-  export.js             standalone SVG/PNG export with embedded fonts
-  app.js                screens, answers, reveal, reflection, storage
-  styles.css            base + screens
-  card.css              the card object + print rules
-  sw.js                 offline cache
-  fonts/                self-hosted woff2 (no CDN)
-  icons/                app icons
-serve.js                zero-dependency static server
-test/smoke.js           drives the real pages in jsdom
-test/restore.js         the "welcome back" path across two visits
-test/a11y.js            axe-core audit of every screen
-tools/render-deck.js    renders the deck + contact sheet (default build/)
-tools/sync-fonts.js     copies the needed fonts out of node_modules
-assets/deck/            pre-rendered cards (760×1064)
-assets/deck-all-powers.png   the whole deck on one sheet
+index.html            the activity
+gallery.html          the 16 powers + power lookup
+guide.html            facilitator guide
+superpowers.js        questions, the 16 powers, the reveal math  (data only)
+sigils.js             one SVG glyph per power
+cards.js              card renderer (pure string SVG)
+export.js             standalone SVG/PNG export with embedded fonts
+app.js                screens, answers, reveal, reflection, storage
+styles.css            base + screens
+card.css              the card object + print rules
+sw.js                 offline cache
+manifest.webmanifest  installable app
+fonts/                self-hosted woff2 (no CDN)
+icons/                app icons
+assets/deck/          pre-rendered cards
+serve.js              zero-dependency static server
+test/smoke.js         drives the real pages in jsdom
+test/restore.js       the "welcome back" path across two visits
+test/a11y.js          axe-core audit of every screen
+tools/render-deck.js  renders the deck + contact sheet
+tools/sync-fonts.js   copies the needed fonts out of node_modules
 ```
 
 Data, rendering and behaviour are deliberately separate: `superpowers.js` has no
 DOM, `cards.js` has no state, and `app.js` only wires them together.
 
 ---
+
+## If a change doesn't seem to show up
+
+GitHub Pages caches aggressively. The page and the service worker both carry a
+build id (`data-build` on `<html>`, `VERSION` in `sw.js`); if they disagree the
+app reloads itself once, so a stale copy can't leave you on an old build. After
+a deploy, a hard refresh (Ctrl/Cmd+Shift+R) shows the new version immediately.
+
+Changing either of those two ids together is what marks a new build.
 
 ## Privacy
 
@@ -140,19 +159,17 @@ service worker caches only the app's own files.
 ## Development
 
 ```bash
-npm test              # 68 checks: formula, cards, the participant flow, export,
-                      # gallery, guide, and the return-visit restore path
-npm run test:a11y     # axe-core audit; currently 0 violations across all 7 screens
-npm run deck          # regenerate assets/deck (PNGs) — add --svg to keep sources
-npm run fonts         # re-copy fonts out of node_modules if the font set changes
+npm install
+npm test                 # 90 checks: formula, card fitting, the participant flow,
+                         # redo-changes-the-card, export, gallery, guide, restore
+npm run test:combinations  # drives all 64 combinations through the real UI (~2 min)
+npm run test:a11y        # axe-core audit; 0 violations across all 7 screens
+npm run deck             # regenerate assets/deck — add --svg to keep the sources
+npm run fonts            # re-copy fonts out of node_modules if the font set changes
 ```
 
 The deck renderer decompresses the woff2 fonts to TTF first, because the
-rasteriser can't read woff2 and would otherwise silently substitute its own
-fonts. That is why the committed cards match the live page.
-
-The smoke test boots the real server, loads the real pages in jsdom, and plays the
-activity the way a participant would.
+rasteriser can't read woff2 and would otherwise silently substitute its own fonts.
 
 ---
 

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-build="komyu-kumustahan-v3">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SUPERPOWER — What Would You Do If You Could? | Kumustahan Activity</title>
+<title>KOMYU KUMUSTAHAN — What Would You Do If You Could?</title>
 <meta name="description" content="A 10–15 minute kumustahan game. Answer three questions, receive a superpower determined by the combination of all three, and reflect on where you would use it.">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#05060d">
-<meta property="og:title" content="SUPERPOWER — What Would You Do If You Could?">
+<meta property="og:title" content="KOMYU KUMUSTAHAN — What Would You Do If You Could?">
 <meta property="og:description" content="Three questions. Sixteen powers. Sixty-four possible combinations. A kumustahan activity about what we wish we could change.">
 <meta property="og:type" content="website">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -22,11 +22,10 @@
 
 <header class="topbar">
   <div class="wrap topbar__inner">
-    <a class="brand" href="index.html">SUPERPOWER <span>Kumustahan</span></a>
+    <a class="brand" href="index.html">KOMYU KUMUSTAHAN</a>
     <nav aria-label="Main">
       <a href="index.html" aria-current="page">Play</a>
       <a href="gallery.html"><span class="lg-only">The 16 </span>Powers</a>
-      <a href="guide.html"><span class="lg-only">Facilitator </span>Guide</a>
     </nav>
   </div>
 </header>
@@ -40,7 +39,7 @@
         <div>
           <div class="title-mark">
             <p class="eyebrow">Kumustahan Activity · 10–15 minutes</p>
-            <h1 class="display" id="landing-title">SUPERPOWER<em>What would you do if you could?</em></h1>
+            <h1 class="display" id="landing-title"><span class="display__name">KOMYU KUMUSTAHAN</span><em>What would you do if you could?</em></h1>
           </div>
 
           <p class="landing__lede">
@@ -66,7 +65,7 @@
 
         <div class="hero-stack" id="hero-stack" aria-hidden="true">
           <div class="hero-stack__halo"></div>
-          <div class="hero-stack__caption">Sixteen powers · sixty-four paths</div>
+          <div class="hero-stack__caption">A preview of the deck — your card is one of sixteen</div>
         </div>
       </div>
 
@@ -186,6 +185,12 @@
             <button class="btn btn--ghost" id="btn-share" type="button">Share</button>
           </div>
 
+          <p class="reveal__redo">
+            <span>Not the power you expected? Each combination gives a different card.</span>
+            <span class="spacer"></span>
+            <button type="button" class="linkish" id="btn-redo">Try different answers</button>
+          </p>
+
           <div class="recap">
             <p class="recap__title">The three answers you gave</p>
             <ul id="reveal-recap"></ul>
@@ -230,6 +235,7 @@
 
       <div class="quiz__foot">
         <button class="btn btn--ghost btn--sm" id="btn-reflect-back" type="button">Back to my card</button>
+        <button class="btn btn--ghost btn--sm" id="btn-reflect-redo" type="button">Change my answers</button>
         <span class="spacer"></span>
         <button class="btn btn--gold" id="btn-to-twist" type="button">One last question</button>
       </div>
@@ -275,7 +281,7 @@
 
 <footer class="footer">
   <div class="wrap footer__inner">
-    <span>SUPERPOWER · A kumustahan activity · Works offline</span>
+    <span>KOMYU KUMUSTAHAN · A kumustahan activity · Works offline</span>
     <nav aria-label="Footer">
       <a href="gallery.html">The 16 powers</a>
       <a href="guide.html">Facilitator guide</a>

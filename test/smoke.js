@@ -14,7 +14,7 @@ const { JSDOM, VirtualConsole } = require('jsdom');
 const { spawn } = require('child_process');
 const http = require('http');
 
-const ROOT = path.join(__dirname, '..', 'public');
+const ROOT = __dirname.replace(/[\\/]test$|[\\/]tools$/, '');
 let pass = 0, fail = 0;
 
 function ok(name, cond, extra) {
@@ -77,7 +77,7 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
 
   /* ---------- 1. data / formula ---------- */
   console.log('formula');
-  const SP = require('../public/superpowers.js');
+  const SP = require('../superpowers.js');
   ok('16 powers defined', SP.POWERS.length === 16);
   ok('3 questions, 4 options each',
     SP.QUESTIONS.length === 3 && SP.QUESTIONS.every(q => q.options.length === 4));
@@ -110,14 +110,31 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
   }
   ok('changing Q3 always changes the power', flipped === tested, flipped + '/' + tested);
 
+  /* every combination maps to its own power, and the UI shows that power.
+     test/all16.js drives all 64 through the browser for the slow proof. */
+  const cardForCombo = {};
+  for (const q1 of 'ABCD') for (const q2 of 'ABCD') for (const q3 of 'ABCD') {
+    const p = SP.powerFor({ q1, q2, q3 });
+    cardForCombo[q1 + q2 + q3] = p.name;
+  }
+  ok('no combination returns an empty or undefined card',
+    Object.values(cardForCombo).every(Boolean) && Object.keys(cardForCombo).length === 64);
+  const byPower = {};
+  Object.entries(cardForCombo).forEach(([c, n]) => { (byPower[n] = byPower[n] || []).push(c); });
+  ok('sixteen distinct cards across the 64 combinations', Object.keys(byPower).length === 16);
+  ok('AEGIS is only one of them (5 combinations)',
+    byPower.AEGIS.length === 5 && byPower.AEGIS.join(' ') === 'AAA ADB BCD CCA DBC',
+    byPower.AEGIS.join(' '));
+
   ok('known case AAA -> AEGIS', SP.powerFor({ q1: 'A', q2: 'A', q3: 'A' }).key === 'aegis');
   ok('known case DDD -> ORACLE', SP.powerFor({ q1: 'D', q2: 'D', q3: 'D' }).key === 'oracle');
   ok('known case BBB -> NOVA', SP.powerFor({ q1: 'B', q2: 'B', q3: 'B' }).key === 'nova');
 
   /* ---------- 2. card renderer ---------- */
   console.log('\ncards');
-  const CARDS = require('../public/cards.js');
-  const SIG = require('../public/sigils.js');
+  const fontkit = require('fontkit');
+  const CARDS = require('../cards.js');
+  const SIG = require('../sigils.js');
   ok('a sigil exists for every power', SP.POWERS.every(p => typeof SIG[p.sigil] === 'string'));
   let uniqueIds = true;
   const svgs = SP.POWERS.map((p, i) => {
@@ -126,6 +143,12 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
     return s;
   });
   ok('gradient ids are namespaced per card', uniqueIds);
+  /* the eyebrow must not run into the right-aligned NO. NN label */
+  const eyebrowFont = fontkit.openSync(path.join(ROOT, 'fonts', 'inter-latin-600-normal.woff2'));
+  const eyebrowText = 'KOMYU KUMUSTAHAN';
+  const eyebrowW = eyebrowFont.layout(eyebrowText).glyphs
+    .reduce((a, g) => a + g.advanceWidth, 0) / eyebrowFont.unitsPerEm * 7.6 + 1.8 * (eyebrowText.length - 1);
+  ok('card eyebrow fits beside NO. NN', eyebrowW < 268, Math.round(eyebrowW) + 'px of 268');
   ok('every card carries its name and domain',
     SP.POWERS.every((p, i) => svgs[i].includes(p.name) && svgs[i].includes(p.domain)));
   ok('every card carries its description',
@@ -144,7 +167,6 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
 
   /* real font metrics, not estimates — the card is 420 units wide and keeps
      44 units of margin on each side */
-  const fontkit = require('fontkit');
   const CARD_SAFE = 420 - 88;
   const cinzel = fontkit.openSync(path.join(ROOT, 'fonts', 'cinzel-latin-600-normal.woff2'));
   const cormorant = fontkit.openSync(path.join(ROOT, 'fonts', 'cormorant-garamond-latin-300-italic.woff2'));
@@ -183,6 +205,47 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
   ok('landing screen visible', doc.querySelector('#screen-landing').classList.contains('is-active'));
   ok('hero stack built (3 stacked cards)', doc.querySelectorAll('#hero-stack .hero-card').length === 3);
 
+  /* branding + navigation */
+  ok('app is called KOMYU KUMUSTAHAN',
+    /KOMYU KUMUSTAHAN/.test(doc.querySelector('#landing-title').textContent));
+  const navLabels = Array.from(doc.querySelectorAll('.topbar nav a')).map(a => a.textContent.trim());
+  ok('top nav has no facilitator/admin link',
+    !navLabels.some(t => /facilitat|admin/i.test(t)), navLabels.join(' | '));
+  ok('top nav still reaches the deck', navLabels.some(t => /powers/i.test(t)), navLabels.join(' | '));
+  ok('footer still offers the facilitator guide',
+    !!doc.querySelector('.footer a[href="guide.html"]'));
+
+  /* the brand must fit the space it is given (real metrics) */
+  const F = require('fontkit');
+  const brandFont = F.openSync(path.join(ROOT, 'fonts', 'cinzel-latin-600-normal.woff2'));
+  const brandWidth = (text, size, ls) =>
+    brandFont.layout(text).glyphs.reduce((a, g) => a + g.advanceWidth, 0)
+      / brandFont.unitsPerEm * size + ls * size * (text.length - 1);
+  ok('hero name fits the hero column at 46px',
+    brandWidth('KOMYU KUMUSTAHAN', 46, 0.03) < 572,
+    Math.round(brandWidth('KOMYU KUMUSTAHAN', 46, 0.03)) + 'px');
+  /* Sweep every viewport width. The name wraps, so the unit that must fit is
+     the longest single word: if it exceeds the line box it breaks mid-word,
+     and since the box is never wider than the column, fitting the box means
+     fitting the column. (500–700px puts the name on one line — fine.) */
+  let worstWord = 0, breakAt = null;
+  for (let vw = 320; vw <= 1600; vw += 1) {
+    const twoCol = vw >= 941;
+    const col = twoCol ? (vw - 44 - 76) * 0.54 : vw - 44;
+    const font = Math.min(46, Math.max(30, 0.043 * vw));
+    const box = Math.min(col, 26 * 16);          /* .display__name max-width */
+    const word = brandWidth('KUMUSTAHAN', font, 0.03);
+    worstWord = Math.max(worstWord, word / box);
+    if (word > box && breakAt === null) breakAt = vw;
+  }
+  ok('hero name never breaks mid-word (320px–1600px)', breakAt === null,
+    'would break at ' + breakAt + 'px');
+  ok('hero name sits comfortably in its line box', worstWord < 0.95,
+    'widest word ' + Math.round(worstWord * 100) + '% of the line box');
+  ok('topbar brand fits next to the nav at 12px',
+    brandWidth('KOMYU KUMUSTAHAN', 12, 0.2) < 260,
+    Math.round(brandWidth('KOMYU KUMUSTAHAN', 12, 0.2)) + 'px');
+
   doc.querySelector('#btn-begin').click();
   await tick(60);
   ok('begin -> spiel', doc.querySelector('#screen-spiel').classList.contains('is-active'));
@@ -218,10 +281,41 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
   ok('revealed the right power (BCD -> ' + expected.name + ')',
     doc.querySelector('#reveal-name').textContent === expected.name,
     doc.querySelector('#reveal-name').textContent);
+
+  /* The card must actually change when the answers change. Playing a second
+     round with a different Q3 and asserting a different card is the check
+     that would have caught a "stuck on one card" bug. */
+  ok('REDO control exists on the reveal', !!doc.querySelector('#btn-redo'));
+  doc.querySelector('#btn-redo').click();
+  await tick(120);
+  ok('redo returns to question 1', /change one thing in your life/.test(
+    doc.querySelector('#q-prompt') ? doc.querySelector('#q-prompt').textContent
+      : (doc.querySelector('#quiz-stage .q__prompt') || {}).textContent || ''));
+  ok('redo clears the previous choice',
+    !doc.querySelector('.option.is-chosen'));
+
+  for (const k of ['B', 'C', 'A']) {          // BCA instead of BCD
+    doc.querySelector(`.option[data-key="${k}"]`).click();
+    await tick(430);
+  }
+  doc.querySelector('#btn-skip-processing').click();
+  await tick(140);
+  const second = SP.powerFor({ q1: 'B', q2: 'C', q3: 'A' });
+  ok('different answer -> different card (' + expected.name + ' -> ' + second.name + ')',
+    doc.querySelector('#reveal-name').textContent === second.name &&
+    second.name !== expected.name,
+    doc.querySelector('#reveal-name').textContent);
+  ok('the card artwork itself is rebuilt',
+    doc.querySelector('#reveal-card svg').getAttribute('viewBox') === '0 0 420 588');
   ok('card rendered on reveal', !!doc.querySelector('#reveal-card svg.card__svg'));
   ok('accent colour switched to the power',
-    win.document.documentElement.style.getPropertyValue('--accent-rgb') === expected.c1.join(', '));
-  ok('combination seal shows answers', doc.querySelector('#reveal-seal').textContent.replace(/\s/g, '') === 'BCD');
+    win.document.documentElement.style.getPropertyValue('--accent-rgb') === second.c1.join(', '),
+    win.document.documentElement.style.getPropertyValue('--accent-rgb') + ' vs ' + second.c1.join(', '));
+  ok('combination seal shows the new answers',
+    doc.querySelector('#reveal-seal').textContent.replace(/\s/g, '') === 'BCA',
+    doc.querySelector('#reveal-seal').textContent.trim());
+  ok('recap reflects the new answers', /Courage to face anything/.test(
+    doc.querySelector('#reveal-recap').textContent));
   ok('recap lists three answers', doc.querySelectorAll('#reveal-recap li').length === 3);
 
   doc.querySelector('#btn-to-reflect').click();
@@ -245,7 +339,7 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
 
   /* ---------- 3b. export ---------- */
   console.log('\nexport');
-  const EXPORT = require('../public/export.js');
+  const EXPORT = require('../export.js');
   const fakeFetch = async p => {
     const buf = fs.readFileSync(path.join(ROOT, p));
     return { ok: true, arrayBuffer: async () => buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) };
@@ -315,7 +409,7 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
     // jsdom gives each page its own storage, so seed then re-init in this window
     back2.win.localStorage.setItem('superpower.kumustahan.v1', saved);
     ok('storage is readable for a returning participant',
-      JSON.parse(back2.win.localStorage.getItem('superpower.kumustahan.v1')).power === expected.key);
+      JSON.parse(back2.win.localStorage.getItem('superpower.kumustahan.v1')).power === second.key);
   }
 
   /* ---------- 5. guide ---------- */

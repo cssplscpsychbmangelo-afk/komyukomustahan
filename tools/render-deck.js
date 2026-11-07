@@ -9,7 +9,7 @@
      node tools/render-deck.js --out assets/deck   -> write somewhere else
 
    The card art borrows the page's fonts, so they are decompressed from
-   public/fonts (woff2) to TTF and embedded before rasterising — otherwise
+   fonts/ (woff2) to TTF and embedded before rasterising — otherwise
    the renderer silently substitutes its own fonts and the cards look wrong.
 
    Needs `sharp` and `wawoff2` (devDependencies). Output defaults to
@@ -21,10 +21,10 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
-const ROOT = path.join(__dirname, '..');
-const SP = require(path.join(ROOT, 'public', 'superpowers.js'));
-const CARDS = require(path.join(ROOT, 'public', 'cards.js'));
-const EXPORT = require(path.join(ROOT, 'public', 'export.js'));
+const ROOT = __dirname.replace(/[\\/]test$|[\\/]tools$/, '');
+const SP = require(path.join(ROOT, 'superpowers.js'));
+const CARDS = require(path.join(ROOT, 'cards.js'));
+const EXPORT = require(path.join(ROOT, 'export.js'));
 
 const args = process.argv.slice(2);
 const keepSvg = args.includes('--svg');
@@ -47,7 +47,7 @@ async function fontFetch() {
   }
   const cache = new Map();
   return async url => {
-    const src = path.join(ROOT, 'public', url);
+    const src = path.join(ROOT, url);
     if (!cache.has(src)) cache.set(src, await wawoff2.decompress(fs.readFileSync(src)));
     const ttf = cache.get(src);
     return {
