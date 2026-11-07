@@ -138,6 +138,15 @@ DOM, `cards.js` has no state, and `app.js` only wires them together.
 
 ---
 
+## If a change doesn't seem to show up
+
+GitHub Pages caches aggressively. The page and the service worker both carry a
+build id (`data-build` on `<html>`, `VERSION` in `sw.js`); if they disagree the
+app reloads itself once, so a stale copy can't leave you on an old build. After
+a deploy, a hard refresh (Ctrl/Cmd+Shift+R) shows the new version immediately.
+
+Changing either of those two ids together is what marks a new build.
+
 ## Privacy
 
 Answers and reflections are stored in `localStorage` under a single key
@@ -151,11 +160,12 @@ service worker caches only the app's own files.
 
 ```bash
 npm install
-npm test            # 81 checks: formula, card fitting, the participant flow,
-                    # export, gallery, guide, and the return-visit restore path
-npm run test:a11y   # axe-core audit; currently 0 violations across all 7 screens
-npm run deck        # regenerate assets/deck — add --svg to keep the sources
-npm run fonts       # re-copy fonts out of node_modules if the font set changes
+npm test                 # 90 checks: formula, card fitting, the participant flow,
+                         # redo-changes-the-card, export, gallery, guide, restore
+npm run test:combinations  # drives all 64 combinations through the real UI (~2 min)
+npm run test:a11y        # axe-core audit; 0 violations across all 7 screens
+npm run deck             # regenerate assets/deck — add --svg to keep the sources
+npm run fonts            # re-copy fonts out of node_modules if the font set changes
 ```
 
 The deck renderer decompresses the woff2 fonts to TTF first, because the

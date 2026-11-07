@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-build="komyu-kumustahan-v3">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -65,7 +65,7 @@
 
         <div class="hero-stack" id="hero-stack" aria-hidden="true">
           <div class="hero-stack__halo"></div>
-          <div class="hero-stack__caption">Sixteen powers · sixty-four paths</div>
+          <div class="hero-stack__caption">A preview of the deck — your card is one of sixteen</div>
         </div>
       </div>
 
@@ -185,6 +185,12 @@
             <button class="btn btn--ghost" id="btn-share" type="button">Share</button>
           </div>
 
+          <p class="reveal__redo">
+            <span>Not the power you expected? Each combination gives a different card.</span>
+            <span class="spacer"></span>
+            <button type="button" class="linkish" id="btn-redo">Try different answers</button>
+          </p>
+
           <div class="recap">
             <p class="recap__title">The three answers you gave</p>
             <ul id="reveal-recap"></ul>
@@ -229,6 +235,7 @@
 
       <div class="quiz__foot">
         <button class="btn btn--ghost btn--sm" id="btn-reflect-back" type="button">Back to my card</button>
+        <button class="btn btn--ghost btn--sm" id="btn-reflect-redo" type="button">Change my answers</button>
         <span class="spacer"></span>
         <button class="btn btn--gold" id="btn-to-twist" type="button">One last question</button>
       </div>

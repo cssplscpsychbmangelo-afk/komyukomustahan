@@ -7,7 +7,7 @@
    ============================================================ */
 'use strict';
 
-const VERSION = 'komyu-kumustahan-v2';
+const VERSION = 'komyu-kumustahan-v3';
 
 const ASSETS = [
   'index.html',
@@ -35,6 +35,8 @@ const ASSETS = [
   'fonts/inter-latin-600-normal.woff2'
 ];
 
+/* A newer worker takes over immediately instead of waiting for every tab to
+   close — without this, a stale build can keep serving an old page. */
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(VERSION)
@@ -49,6 +51,15 @@ self.addEventListener('activate', event => {
       .then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
+});
+
+/* Pages can hold on to index.html for a few minutes after a deploy. If the
+   page's build id doesn't match this worker, tell open tabs to refresh once
+   so nobody is left playing a stale copy. */
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'which-build' && event.source) {
+    event.source.postMessage({ type: 'build', version: VERSION });
+  }
 });
 
 /* cache-first: the app is static, so a hit is always correct */

@@ -9,7 +9,8 @@
     "test": "node test/smoke.js && node test/restore.js",
     "test:a11y": "node test/a11y.js",
     "deck": "node tools/render-deck.js --out assets",
-    "fonts": "node tools/sync-fonts.js"
+    "fonts": "node tools/sync-fonts.js",
+    "test:combinations": "node test/all16.js"
   },
   "devDependencies": {
     "@fontsource/cinzel": "^5.0.0",

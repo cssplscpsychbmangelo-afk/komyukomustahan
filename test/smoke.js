@@ -110,6 +110,22 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
   }
   ok('changing Q3 always changes the power', flipped === tested, flipped + '/' + tested);
 
+  /* every combination maps to its own power, and the UI shows that power.
+     test/all16.js drives all 64 through the browser for the slow proof. */
+  const cardForCombo = {};
+  for (const q1 of 'ABCD') for (const q2 of 'ABCD') for (const q3 of 'ABCD') {
+    const p = SP.powerFor({ q1, q2, q3 });
+    cardForCombo[q1 + q2 + q3] = p.name;
+  }
+  ok('no combination returns an empty or undefined card',
+    Object.values(cardForCombo).every(Boolean) && Object.keys(cardForCombo).length === 64);
+  const byPower = {};
+  Object.entries(cardForCombo).forEach(([c, n]) => { (byPower[n] = byPower[n] || []).push(c); });
+  ok('sixteen distinct cards across the 64 combinations', Object.keys(byPower).length === 16);
+  ok('AEGIS is only one of them (5 combinations)',
+    byPower.AEGIS.length === 5 && byPower.AEGIS.join(' ') === 'AAA ADB BCD CCA DBC',
+    byPower.AEGIS.join(' '));
+
   ok('known case AAA -> AEGIS', SP.powerFor({ q1: 'A', q2: 'A', q3: 'A' }).key === 'aegis');
   ok('known case DDD -> ORACLE', SP.powerFor({ q1: 'D', q2: 'D', q3: 'D' }).key === 'oracle');
   ok('known case BBB -> NOVA', SP.powerFor({ q1: 'B', q2: 'B', q3: 'B' }).key === 'nova');
@@ -265,10 +281,41 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
   ok('revealed the right power (BCD -> ' + expected.name + ')',
     doc.querySelector('#reveal-name').textContent === expected.name,
     doc.querySelector('#reveal-name').textContent);
+
+  /* The card must actually change when the answers change. Playing a second
+     round with a different Q3 and asserting a different card is the check
+     that would have caught a "stuck on one card" bug. */
+  ok('REDO control exists on the reveal', !!doc.querySelector('#btn-redo'));
+  doc.querySelector('#btn-redo').click();
+  await tick(120);
+  ok('redo returns to question 1', /change one thing in your life/.test(
+    doc.querySelector('#q-prompt') ? doc.querySelector('#q-prompt').textContent
+      : (doc.querySelector('#quiz-stage .q__prompt') || {}).textContent || ''));
+  ok('redo clears the previous choice',
+    !doc.querySelector('.option.is-chosen'));
+
+  for (const k of ['B', 'C', 'A']) {          // BCA instead of BCD
+    doc.querySelector(`.option[data-key="${k}"]`).click();
+    await tick(430);
+  }
+  doc.querySelector('#btn-skip-processing').click();
+  await tick(140);
+  const second = SP.powerFor({ q1: 'B', q2: 'C', q3: 'A' });
+  ok('different answer -> different card (' + expected.name + ' -> ' + second.name + ')',
+    doc.querySelector('#reveal-name').textContent === second.name &&
+    second.name !== expected.name,
+    doc.querySelector('#reveal-name').textContent);
+  ok('the card artwork itself is rebuilt',
+    doc.querySelector('#reveal-card svg').getAttribute('viewBox') === '0 0 420 588');
   ok('card rendered on reveal', !!doc.querySelector('#reveal-card svg.card__svg'));
   ok('accent colour switched to the power',
-    win.document.documentElement.style.getPropertyValue('--accent-rgb') === expected.c1.join(', '));
-  ok('combination seal shows answers', doc.querySelector('#reveal-seal').textContent.replace(/\s/g, '') === 'BCD');
+    win.document.documentElement.style.getPropertyValue('--accent-rgb') === second.c1.join(', '),
+    win.document.documentElement.style.getPropertyValue('--accent-rgb') + ' vs ' + second.c1.join(', '));
+  ok('combination seal shows the new answers',
+    doc.querySelector('#reveal-seal').textContent.replace(/\s/g, '') === 'BCA',
+    doc.querySelector('#reveal-seal').textContent.trim());
+  ok('recap reflects the new answers', /Courage to face anything/.test(
+    doc.querySelector('#reveal-recap').textContent));
   ok('recap lists three answers', doc.querySelectorAll('#reveal-recap li').length === 3);
 
   doc.querySelector('#btn-to-reflect').click();
@@ -362,7 +409,7 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
     // jsdom gives each page its own storage, so seed then re-init in this window
     back2.win.localStorage.setItem('superpower.kumustahan.v1', saved);
     ok('storage is readable for a returning participant',
-      JSON.parse(back2.win.localStorage.getItem('superpower.kumustahan.v1')).power === expected.key);
+      JSON.parse(back2.win.localStorage.getItem('superpower.kumustahan.v1')).power === second.key);
   }
 
   /* ---------- 5. guide ---------- */

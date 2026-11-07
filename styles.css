@@ -304,6 +304,7 @@ h1.display em {
 .hero-card--back-left { transform: translate3d(-36%, 6%, -110px) rotate(-11deg); opacity: .52; filter: saturate(.7) brightness(.62); }
 .hero-card--back-right { transform: translate3d(36%, 6%, -110px) rotate(11deg); opacity: .52; filter: saturate(.7) brightness(.62); }
 .hero-card--front { transform: translate3d(0, 0, 40px) rotate(-1.5deg); }
+.hero-card { pointer-events: none; }          /* decorative preview only */
 .hero-stack:hover .hero-card--back-left { transform: translate3d(-48%, 8%, -110px) rotate(-15deg); opacity: .62; }
 .hero-stack:hover .hero-card--back-right { transform: translate3d(48%, 8%, -110px) rotate(15deg); opacity: .62; }
 .hero-stack__caption {
@@ -542,6 +543,21 @@ h2.reveal__name {
 }
 .reveal__combo .odds { font-family: var(--quote); font-style: italic; font-size: 14px; letter-spacing: 0; color: #a9a5b7; }
 .reveal__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+
+/* keep "did the card surprise you?" and a redo within reach on a phone */
+.reveal__redo {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+  margin-top: 26px; padding: 12px 16px; border-radius: 14px;
+  border: 1px solid rgba(var(--accent-rgb), .22); background: rgba(var(--accent-rgb), .05);
+  font-size: 13px; color: #a8a5b6;
+}
+.reveal__redo .spacer { flex: 1; }
+.reveal__redo .linkish {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  font: inherit; font-weight: 600; color: var(--gold);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.reveal__redo .linkish:hover { color: #fff6e0; }
 
 /* answer recap */
 .recap { margin-top: 34px; border-top: 1px solid rgba(255,255,255,.08); padding-top: 22px; }
