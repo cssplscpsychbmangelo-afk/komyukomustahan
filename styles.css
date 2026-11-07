@@ -202,8 +202,8 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 600; line-height: 1.1
 }
 .brand {
   display: inline-flex; align-items: baseline; gap: 10px;
-  font-family: var(--display); font-size: 13px; font-weight: 700;
-  letter-spacing: .34em; text-transform: uppercase; color: var(--paper);
+  font-family: var(--display); font-size: 12px; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--paper);
   text-decoration: none; white-space: nowrap;
 }
 .brand span { color: var(--gold); font-size: 9px; letter-spacing: .22em; font-family: var(--sans); font-weight: 500; opacity: .8; }
@@ -243,16 +243,23 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 600; line-height: 1.1
 .title-mark { display: flex; flex-direction: column; gap: 6px; }
 .title-mark .eyebrow { color: var(--gold); opacity: .85; letter-spacing: .4em; }
 h1.display {
-  /* caps at 64px: "SUPERPOWER" is a long word and the hero column is
-     only ~570px wide at the max container width */
-  font-size: clamp(38px, 6.2vw, 64px);
+  /* the name wraps to two lines above ~46px, which is where it stops
+     overflowing the ~572px hero column */
+  font-size: clamp(30px, 4.3vw, 46px);
   letter-spacing: .03em;
-  line-height: .96;
+  line-height: 1.02;
   margin: 10px 0 0;
   background: linear-gradient(180deg, #fffaf0 8%, #f0dfbc 44%, #c5a469 88%);
   -webkit-background-clip: text; background-clip: text;
   color: transparent;
   filter: drop-shadow(0 10px 34px rgba(230,200,139,.24));
+}
+.display__name {
+  display: block;
+  /* wide enough for "KUMUSTAHAN" on one line, too narrow for the whole
+     name — so it always reads as two stacked lines, never a mid-word break */
+  max-width: min(100%, 26rem);
+  text-wrap: balance;
 }
 h1.display em {
   display: block; font-family: var(--quote); font-style: italic; font-weight: 300;
@@ -687,7 +694,7 @@ h2.reveal__name {
   .dimensions { grid-template-columns: 1fr; }
   .lg-only { display: none; }
   .topbar__inner { gap: 8px; min-height: 56px; }
-  .brand { font-size: 11px; letter-spacing: .24em; }
+  .brand { font-size: 10px; letter-spacing: .14em; }
   .topbar nav a { font-size: 9.5px; letter-spacing: .08em; padding: 6px 7px; }
   .reveal__actions .btn, .landing__actions .btn { flex: 1 1 auto; }
   .footer__inner { flex-direction: column; align-items: flex-start; }

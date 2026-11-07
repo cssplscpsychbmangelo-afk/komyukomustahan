@@ -227,7 +227,7 @@
   /* ---------- copy used across the page ---------- */
 
   const COPY = {
-    title: 'SUPERPOWER',
+    title: 'KOMYU KUMUSTAHAN',
     subtitle: 'What Would You Do If You Could?',
     length: 'Kumustahan Activity · 10–15 minutes',
     spiel: [

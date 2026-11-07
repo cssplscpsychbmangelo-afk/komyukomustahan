@@ -258,6 +258,12 @@
     const gid = k => `${id}-${k}`;
     const padded = String(power.n).padStart(2, '0');
 
+    /* The card is 420 units wide; the eyebrow has ~268 units before it
+       reaches the right-aligned NO. NN label. Measured, not guessed. */
+    const eyebrow = opts.brand || 'KOMYU KUMUSTAHAN';
+    const eyebrowSize = eyebrow.length > 12 ? 7.6 : 8.6;
+    const eyebrowTrack = eyebrow.length > 12 ? 1.8 : 3.4;
+
     if (opts.artOnly) {
       return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg"
                    class="card__svg" aria-hidden="true" focusable="false">
@@ -291,9 +297,9 @@
       </g>
 
       <!-- header -->
-      <g font-family="Inter, system-ui, sans-serif" font-size="8.6" font-weight="600"
-         letter-spacing="3.4" fill="${rgba(c1, .78)}">
-        <text x="44" y="54">SUPERPOWER</text>
+      <g font-family="Inter, system-ui, sans-serif" font-size="${eyebrowSize}" font-weight="600"
+         letter-spacing="${eyebrowTrack}" fill="${rgba(c1, .78)}">
+        <text x="44" y="54">${eyebrow}</text>
         <text x="${W - 44}" y="54" text-anchor="end" fill="rgba(255,255,255,.4)">NO. ${padded}</text>
       </g>
       <path d="M44 66 H${W - 44}" stroke="rgba(255,255,255,.12)" stroke-width="1"/>

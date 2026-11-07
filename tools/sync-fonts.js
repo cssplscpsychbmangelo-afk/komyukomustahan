@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* Copies the exact font files the page needs out of node_modules and
-   into public/fonts, so the app stays fully offline (no CDN, no Google
+   into fonts/, so the app stays fully offline (no CDN, no Google
    Fonts request, no network at runtime).
 
      npm install
@@ -11,8 +11,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = path.join(__dirname, '..');
-const DEST = path.join(ROOT, 'public', 'fonts');
+const ROOT = __dirname.replace(/[\\/]test$|[\\/]tools$/, '');
+const DEST = path.join(ROOT, 'fonts');
 
 const FILES = [
   ['@fontsource/cinzel', 'cinzel-latin-400-normal.woff2'],
@@ -43,5 +43,5 @@ const total = fs.readdirSync(DEST)
   .map(f => fs.statSync(path.join(DEST, f)).size)
   .reduce((a, b) => a + b, 0);
 
-console.log(`\n  ${copied} font files in public/fonts (${Math.round(total / 1024)} KB)` +
+console.log(`\n  ${copied} font files in fonts/ (${Math.round(total / 1024)} KB)` +
   (missing ? `, ${missing} missing — run npm install` : ''));

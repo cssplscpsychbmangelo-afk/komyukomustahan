@@ -467,11 +467,11 @@
       const svg = await window.EXPORT.buildSvg(p, CARDS, { id: 'export' });
       const slug = p.name.toLowerCase();
       triggerDownload(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }),
-        `superpower-${slug}.svg`);
+        `komyu-kumustahan-${slug}.svg`);
 
       // a PNG as well, because most chat apps won't preview an SVG
       const png = await window.EXPORT.toPng(svg, CARDS.W, CARDS.H, 2);
-      if (png) triggerDownload(png, `superpower-${slug}.png`);
+      if (png) triggerDownload(png, `komyu-kumustahan-${slug}.png`);
 
       toast(`${p.name} saved to your device.`);
     } catch (e) {
@@ -501,7 +501,7 @@
     const url = location.href.split('#')[0];
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'SUPERPOWER', text, url });
+        await navigator.share({ title: 'Komyu Kumustahan', text, url });
         return;
       } catch (e) { /* user cancelled or unsupported */ }
     }

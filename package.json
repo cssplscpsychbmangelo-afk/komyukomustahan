@@ -2,7 +2,7 @@
   "name": "komyukomustahan-superpower",
   "version": "1.0.0",
   "private": true,
-  "description": "SUPERPOWER \u2014 a 10\u201315 minute kumustahan activity. Three questions, sixteen powers, sixty-four combinations.",
+  "description": "KOMYU KUMUSTAHAN \u2014 a 10\u201315 minute kumustahan activity. Three questions, sixteen powers, sixty-four combinations.",
   "scripts": {
     "start": "node serve.js",
     "dev": "node serve.js 8000",

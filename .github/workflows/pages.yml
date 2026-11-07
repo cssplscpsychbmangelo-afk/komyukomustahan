@@ -1,0 +1,40 @@
+# GitHub Pages deployment
+#
+# The app is a static site served straight from the repository root, so a
+# build step would only get in the way. This workflow publishes the branch
+# root as-is.
+#
+# If Settings → Pages still points at "GitHub Actions" from an earlier
+# publish, this keeps the site current; if it points at a branch, GitHub's
+# built-in deployment handles it and this file is harmless.
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4

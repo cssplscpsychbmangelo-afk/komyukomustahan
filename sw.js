@@ -7,7 +7,7 @@
    ============================================================ */
 'use strict';
 
-const VERSION = 'superpower-v1';
+const VERSION = 'komyu-kumustahan-v2';
 
 const ASSETS = [
   'index.html',
