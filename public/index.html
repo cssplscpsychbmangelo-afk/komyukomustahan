@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SUPERPOWER — What Would You Do If You Could? | Kumustahan Activity</title>
+<meta name="description" content="A 10–15 minute kumustahan game. Answer three questions, receive a superpower determined by the combination of all three, and reflect on where you would use it.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#05060d">
+<meta property="og:title" content="SUPERPOWER — What Would You Do If You Could?">
+<meta property="og:description" content="Three questions. Sixteen powers. Sixty-four possible combinations. A kumustahan activity about what we wish we could change.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="card.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <a class="brand" href="index.html">SUPERPOWER <span>Kumustahan</span></a>
+    <nav aria-label="Main">
+      <a href="index.html" aria-current="page">Play</a>
+      <a href="gallery.html"><span class="lg-only">The 16 </span>Powers</a>
+      <a href="guide.html"><span class="lg-only">Facilitator </span>Guide</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============================ 1 · LANDING ============================ -->
+  <section class="screen is-active" id="screen-landing" aria-labelledby="landing-title">
+    <div class="wrap landing">
+      <div class="landing__grid">
+        <div>
+          <div class="title-mark">
+            <p class="eyebrow">Kumustahan Activity · 10–15 minutes</p>
+            <h1 class="display" id="landing-title">SUPERPOWER<em>What would you do if you could?</em></h1>
+          </div>
+
+          <p class="landing__lede">
+            What if the things you wish you could change, protect, escape from, or achieve could tell you what kind of superpower you need?
+          </p>
+
+          <div class="landing__meta">
+            <span><b>3</b> questions</span>
+            <span><b>16</b> powers</span>
+            <span><b>64</b> possible combinations</span>
+          </div>
+
+          <div class="landing__actions">
+            <button class="btn btn--gold" id="btn-begin" type="button">Begin the awakening</button>
+            <a class="btn btn--ghost" href="gallery.html">See all 16 powers</a>
+          </div>
+          <p class="landing__hint" style="margin-top:14px">
+            No sign-up. Nothing leaves this device — your answers and reflections stay in your browser.
+          </p>
+
+          <div id="restore-slot"></div>
+        </div>
+
+        <div class="hero-stack" id="hero-stack" aria-hidden="true">
+          <div class="hero-stack__halo"></div>
+          <div class="hero-stack__caption">Sixteen powers · sixty-four paths</div>
+        </div>
+      </div>
+
+      <div class="preface" style="margin-top:clamp(40px,7vh,80px)">
+        <div class="preface__grid">
+          <div class="preface__cell">
+            <p class="eyebrow"><span class="num">I.</span> The premise</p>
+            <h2>Three answers, one power</h2>
+            <p>Your power is not decided by a single answer. It is decided by the combination of all three — which is why changing even one answer changes the power you carry.</p>
+          </div>
+          <div class="preface__cell">
+            <p class="eyebrow"><span class="num">II.</span> The turn</p>
+            <h2>Where would you use it?</h2>
+            <p>Once your power is revealed, you will name where it goes: in your own life, and in a society where many of us are deprived of things we deserve.</p>
+          </div>
+          <div class="preface__cell">
+            <p class="eyebrow"><span class="num">III.</span> The twist</p>
+            <h2>You don't need superpowers</h2>
+            <p>The activity does not end in fantasy. It ends with one question: what is one thing you can already do today, without the power?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 2 · SPIEL ============================ -->
+  <section class="screen" id="screen-spiel" aria-labelledby="spiel-title" hidden>
+    <div class="wrap spiel">
+      <div class="spiel__inner">
+        <p class="eyebrow" id="spiel-title">The opening</p>
+        <div class="spiel__text" id="spiel-text">
+          <p>Imagine waking up tomorrow with a superpower.</p>
+          <p>Not just any superpower, but one that reflects what you need, what you value, and what you wish you could change in the world today.</p>
+          <p>Maybe you want to protect someone. Maybe you want to escape from everything for a while. Maybe you want to fight injustice, heal people, or simply have enough time to breathe.</p>
+          <p>In this activity, you will answer three simple questions. Your answers will be combined to reveal a superpower that you will carry for the rest of this activity.</p>
+          <p>Once you discover your power, think about this:</p>
+          <p class="strong">If you had this power today, where would you use it, who would you use it for, and what would you change?</p>
+          <p>There are no wrong answers. Your power is yours to define.</p>
+        </div>
+        <div class="spiel__actions">
+          <button class="btn btn--gold" id="btn-to-quiz" type="button">I'm ready — ask me</button>
+          <button class="btn btn--ghost" id="btn-spiel-back" type="button">Back</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 3 · QUIZ ============================ -->
+  <section class="screen" id="screen-quiz" aria-labelledby="quiz-label" hidden>
+    <div class="wrap quiz">
+      <div class="quiz__head">
+        <div class="quiz__count">
+          <span class="dots" id="quiz-dots" aria-hidden="true"></span>
+          <span class="label" id="quiz-label">Question 1 of 3</span>
+        </div>
+        <button class="btn btn--ghost btn--sm" id="btn-quiz-restart" type="button">Start over</button>
+      </div>
+      <div id="quiz-stage" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ============================ 4 · PROCESSING ============================ -->
+  <section class="screen" id="screen-processing" hidden>
+    <div class="wrap processing">
+      <div class="processing__inner">
+        <div class="rites" aria-hidden="true">
+          <div class="rites__ring"></div>
+          <div class="rites__ring"></div>
+          <div class="rites__ring"></div>
+          <div class="rites__ring"></div>
+          <div class="rites__glyph" id="rites-glyph"></div>
+          <div class="rites__core"></div>
+        </div>
+        <p class="processing__line" id="processing-line" aria-live="polite">The runes are listening…</p>
+        <div class="processing__bar"><i></i></div>
+        <p class="processing__sub" id="processing-sub">Reading your three answers</p>
+        <button class="btn btn--ghost btn--sm" id="btn-skip-processing" type="button" style="margin-top:8px">Skip ahead</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 5 · REVEAL ============================ -->
+  <section class="screen" id="screen-reveal" aria-labelledby="reveal-name" hidden>
+    <div class="wrap reveal">
+      <div class="reveal__grid">
+        <div class="reveal__stage">
+          <div id="reveal-card" class="card"></div>
+        </div>
+
+        <div>
+          <p class="reveal__note">
+            Your answers have been processed. Your choices have revealed something about the power you carry. But remember, a superpower is only as meaningful as the way you choose to use it.
+          </p>
+
+          <p class="reveal__domain" id="reveal-domain">PROTECTION</p>
+          <h2 class="reveal__name" id="reveal-name">AEGIS</h2>
+          <p class="reveal__title" id="reveal-title">The Shield of Protection</p>
+          <p class="reveal__desc" id="reveal-desc"></p>
+
+          <div class="reveal__vision">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/>
+              <circle cx="12" cy="12" r="2.6"/>
+            </svg>
+            <p><span class="eyebrow">Visualisation</span><span id="reveal-vision"></span></p>
+          </div>
+
+          <div class="reveal__combo">
+            <span>Your combination</span>
+            <span class="seal" id="reveal-seal"></span>
+            <span class="odds" id="reveal-odds"></span>
+          </div>
+
+          <div class="reveal__actions">
+            <button class="btn btn--gold" id="btn-to-reflect" type="button">Continue to the reflection</button>
+            <button class="btn" id="btn-download" type="button">Keep this card</button>
+            <button class="btn btn--ghost" id="btn-share" type="button">Share</button>
+          </div>
+
+          <div class="recap">
+            <p class="recap__title">The three answers you gave</p>
+            <ul id="reveal-recap"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 6 · REFLECTION ============================ -->
+  <section class="screen" id="screen-reflect" aria-labelledby="reflect-title" hidden>
+    <div class="wrap reflect">
+      <div class="reflect__head">
+        <p class="eyebrow">The kumustahan</p>
+        <h2 id="reflect-title">Where will you use your power?</h2>
+        <p>Give yourself one to two minutes. Complete these statements — first for your own life, then for the world we live in.</p>
+      </div>
+
+      <div class="timer" id="timer">
+        <span class="timer__clock" id="timer-clock">2:00</span>
+        <button type="button" id="timer-toggle" aria-label="Start reflection timer">Start timer</button>
+        <button type="button" id="timer-reset" aria-label="Reset reflection timer">Reset</button>
+      </div>
+
+      <div class="reflect__grid">
+        <div class="statements" id="statements"></div>
+
+        <aside class="dimensions" aria-label="Two dimensions to reflect on">
+          <div class="dimension">
+            <p class="eyebrow">Dimension one</p>
+            <p><strong>Personal life.</strong> Family, friendships, studies, personal struggles, mental space, and aspirations.</p>
+          </div>
+          <div class="dimension dimension--world">
+            <p class="eyebrow">Dimension two</p>
+            <p><strong>The world we live in.</strong> Poverty, inequality, discrimination, lack of opportunities, suppression of voices, injustice, and other forms of deprivation.</p>
+          </div>
+          <p style="font-size:12px;color:#757385;margin:4px 2px 0;line-height:1.55">
+            Your writing is private. It is saved only in this browser so you don't lose it, and you can clear it any time.
+          </p>
+        </aside>
+      </div>
+
+      <div class="quiz__foot">
+        <button class="btn btn--ghost btn--sm" id="btn-reflect-back" type="button">Back to my card</button>
+        <span class="spacer"></span>
+        <button class="btn btn--gold" id="btn-to-twist" type="button">One last question</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 7 · TWIST + CLOSING ============================ -->
+  <section class="screen" id="screen-twist" aria-labelledby="twist-title" hidden>
+    <div class="wrap twist">
+      <div class="twist__panel">
+        <p class="eyebrow">The final twist</p>
+        <h2 id="twist-title">You don't need superpowers to make a difference.</h2>
+        <p class="ask">
+          After discovering your superpower, what is one thing you can already do today without having that power?
+        </p>
+        <label class="sr-only" for="twist-answer">One thing I can already do today</label>
+        <textarea id="twist-answer" class="twist__answer" placeholder="One thing I can already do today is…" rows="3"></textarea>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:center">
+          <button class="btn btn--sm" id="btn-save-today" type="button">Keep this</button>
+          <span id="today-saved" style="font-size:12.5px;color:#8c8a9c"></span>
+        </div>
+      </div>
+
+      <div class="closing">
+        <p class="closing__quote">
+          “Maybe we cannot stop time, heal every wound, rewrite reality, or protect everyone from everything.
+          But we can choose to listen, speak up, help someone, stand with others, and make things a little better.
+          Sometimes, the world doesn't need another superhero.
+          It needs <em>ordinary people who refuse to be indifferent.</em>”
+        </p>
+        <p class="closing__sig">End of activity</p>
+        <div class="closing__actions">
+          <button class="btn btn--gold" id="btn-download-2" type="button">Save my card</button>
+          <a class="btn" href="gallery.html">Browse all 16 powers</a>
+          <button class="btn btn--ghost" id="btn-again" type="button">Play again</button>
+          <button class="btn btn--ghost" id="btn-clear" type="button">Clear my data</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <span>SUPERPOWER · A kumustahan activity · Works offline</span>
+    <nav aria-label="Footer">
+      <a href="gallery.html">The 16 powers</a>
+      <a href="guide.html">Facilitator guide</a>
+      <a href="index.html">Start again</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="superpowers.js"></script>
+<script src="sigils.js"></script>
+<script src="cards.js"></script>
+<script src="export.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

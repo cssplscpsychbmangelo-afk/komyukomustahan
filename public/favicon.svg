@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="28%" r="82%">
+      <stop offset="0%" stop-color="#2a2140"/>
+      <stop offset="55%" stop-color="#0d0f1c"/>
+      <stop offset="100%" stop-color="#05060d"/>
+    </radialGradient>
+    <linearGradient id="ink" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="34%" stop-color="#f2d79b"/>
+      <stop offset="100%" stop-color="#b98f43"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="1.6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#bg)"/>
+  <g fill="none" stroke="url(#ink)" stroke-width="2" stroke-linejoin="round" filter="url(#glow)">
+    <path d="M32 12 L49 19 V32 C49 42 42 48 32 52 C22 48 15 42 15 32 V19 Z"/>
+    <path d="M32 21 L41 25 V32 C41 37 37 40 32 43 C27 40 23 37 23 32 V25 Z" opacity=".5"/>
+    <path d="M32 19 V46 M22 30 H42" opacity=".28" stroke-width="1.2"/>
+  </g>
+  <circle cx="32" cy="30" r="2.6" fill="#fff5dd"/>
+</svg>

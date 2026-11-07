@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The 16 Powers — SUPERPOWER</title>
+<meta name="description" content="All sixteen superpowers from the SUPERPOWER kumustahan activity, with descriptions and a lookup tool for any of the 64 answer combinations.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#05060d">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="card.css">
+<style>
+  .gallery-hero { padding: clamp(36px, 6vh, 64px) 0 28px; }
+  .gallery-hero h1 { font-size: clamp(32px, 5vw, 56px); margin: 10px 0 12px; }
+  .gallery-hero p.lede {
+    font-family: var(--quote); font-style: italic; font-size: clamp(18px, 2vw, 22px);
+    color: #cbc6bb; max-width: 62ch; margin: 0;
+  }
+
+  /* lookup */
+  .lookup {
+    margin: 20px 0 54px; padding: clamp(20px, 3vw, 30px);
+    border: 1px solid rgba(255,255,255,.1); border-radius: 20px;
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+  }
+  .lookup__head { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: baseline; margin-bottom: 18px; }
+  .lookup__head h2 { font-size: 15px; letter-spacing: .22em; text-transform: uppercase; font-family: var(--sans); font-weight: 600; color: var(--gold); }
+  .lookup__head p { margin: 0; font-size: 13px; color: var(--muted-dim); }
+  .lookup__rows { display: grid; gap: 12px; }
+  .lookup__row { display: grid; grid-template-columns: minmax(180px, 240px) 1fr; gap: 14px; align-items: center; }
+  .lookup__row > span { font-size: 13.5px; color: #b8b5c6; }
+  .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+  .seg button {
+    font-family: var(--sans); font-size: 12.5px; letter-spacing: .02em;
+    padding: 8px 13px; border-radius: 9px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,.13); background: rgba(255,255,255,.03);
+    color: #cfcbd8; transition: all .2s var(--ease);
+  }
+  .seg button b { font-family: var(--display); margin-right: 7px; color: var(--gold); font-size: 11px; }
+  .seg button:hover { border-color: rgba(var(--accent-rgb), .55); color: #fff; background: rgba(var(--accent-rgb), .1); }
+  .seg button[aria-pressed="true"] { border-color: var(--accent); background: rgba(var(--accent-rgb), .18); color: #fff; box-shadow: 0 0 0 1px rgba(var(--accent-rgb), .35); }
+  .lookup__result {
+    margin-top: 20px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08);
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;
+  }
+  .lookup__result .idx { font-family: var(--display); font-size: 13px; letter-spacing: .2em; color: var(--muted-dim); }
+  .lookup__result strong { font-family: var(--display); font-size: clamp(20px, 2.6vw, 28px); letter-spacing: .1em; color: #fff8ea; }
+  .lookup__result em { font-family: var(--quote); font-style: italic; font-size: 18px; color: var(--accent); }
+  .lookup__result code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px;
+    color: #8f8ca0; background: rgba(255,255,255,.05); padding: 3px 8px; border-radius: 6px;
+  }
+  .lookup__result a { margin-left: auto; }
+
+  /* detail dialog */
+  dialog {
+    position: fixed; inset: 0; margin: auto;
+    border: 0; padding: 0; background: transparent; max-width: min(940px, 94vw); width: 100%;
+    max-height: 92vh; overflow: auto; color: var(--paper);
+  }
+  dialog::backdrop { background: rgba(3, 4, 9, .82); backdrop-filter: blur(6px); }
+  .sheet {
+    display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+    gap: clamp(20px, 3vw, 40px); align-items: start;
+    background: #0a0b14; border: 1px solid rgba(255,255,255,.1);
+    border-radius: 24px; padding: clamp(20px, 3vw, 34px);
+    box-shadow: 0 60px 120px -50px #000;
+  }
+  .sheet__body h2 { font-size: clamp(30px, 4vw, 44px); letter-spacing: .06em; margin: 8px 0 4px; }
+  .sheet__body .epithet { font-family: var(--quote); font-style: italic; font-size: 20px; color: var(--accent); margin: 0 0 16px; }
+  .sheet__body p.desc { font-size: 16px; color: #ddd9cf; margin: 0 0 16px; }
+  .sheet__body .vision {
+    font-size: 14px; color: #aca9ba; padding: 14px 16px; border-radius: 12px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+  }
+  .sheet__body .vision b { display: block; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; font-weight: 600; }
+  .sheet__body .combos { margin-top: 16px; font-size: 12.5px; color: var(--muted-dim); }
+  .sheet__body .combos code { color: #cfc8b8; }
+  .sheet__bar { display: flex; gap: 10px; align-items: center; margin-top: 18px; flex-wrap: wrap; }
+
+  .gallery-section { padding-bottom: 90px; }
+  .gallery-section__head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .gallery-section__head h2 { font-size: 13px; font-family: var(--sans); font-weight: 600; letter-spacing: .26em; text-transform: uppercase; color: var(--muted-dim); }
+  .gallery__item .card { cursor: pointer; }
+  .gallery__item .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+  @media (max-width: 820px) {
+    .sheet { grid-template-columns: 1fr; }
+    .lookup__row { grid-template-columns: 1fr; gap: 8px; }
+    .lookup__result a { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <a class="brand" href="index.html">SUPERPOWER <span>Kumustahan</span></a>
+    <nav aria-label="Main">
+      <a href="index.html">Play</a>
+      <a href="gallery.html" aria-current="page"><span class="lg-only">The 16 </span>Powers</a>
+      <a href="guide.html"><span class="lg-only">Facilitator </span>Guide</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap gallery-hero">
+    <p class="eyebrow">The deck</p>
+    <h1>Sixteen powers</h1>
+    <p class="lede">
+      Each power has a visual identity, a short description, and a symbolic meaning.
+      Every card is built from a combination of three answers — sixty-four paths, sixteen destinations.
+    </p>
+  </div>
+
+  <div class="wrap">
+    <section class="lookup" aria-labelledby="lookup-title">
+      <div class="lookup__head">
+        <h2 id="lookup-title">Power lookup</h2>
+        <p>Facilitator tool: pick any combination and see which power it gives.</p>
+      </div>
+      <div class="lookup__rows" id="lookup-rows"></div>
+      <div class="lookup__result" id="lookup-result" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <div class="wrap gallery-section">
+    <div class="gallery-section__head">
+      <h2>All powers · 01 to 16</h2>
+      <p style="font-size:12.5px;color:var(--muted-dim);margin:0">Select a card to read it in full.</p>
+    </div>
+    <div class="gallery__grid" id="gallery-grid"></div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <span>SUPERPOWER · A kumustahan activity · Works offline</span>
+    <nav aria-label="Footer">
+      <a href="index.html">Play the activity</a>
+      <a href="guide.html">Facilitator guide</a>
+    </nav>
+  </div>
+</footer>
+
+<dialog id="power-dialog" aria-labelledby="dialog-name">
+  <div class="sheet">
+    <div id="dialog-card" class="card"></div>
+    <div class="sheet__body">
+      <p class="eyebrow" id="dialog-domain">PROTECTION</p>
+      <h2 id="dialog-name">AEGIS</h2>
+      <p class="epithet" id="dialog-title">The Shield of Protection</p>
+      <p class="desc" id="dialog-desc"></p>
+      <div class="vision"><b>Visualisation</b><span id="dialog-vision"></span></div>
+      <p class="combos" id="dialog-combos"></p>
+      <div class="sheet__bar">
+        <button class="btn btn--sm btn--ghost" id="dialog-close" type="button">Close</button>
+        <a class="btn btn--sm btn--gold" id="dialog-play" href="index.html">Find my power</a>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="superpowers.js"></script>
+<script src="sigils.js"></script>
+<script src="cards.js"></script>
+<script>
+(function () {
+  'use strict';
+  const { POWERS, QUESTIONS, powerFor, powerIndex } = window.SUPERPOWERS;
+  const CARDS = window.CARDS;
+  const $ = s => document.querySelector(s);
+
+  /* ---------- gallery ---------- */
+  const grid = $('#gallery-grid');
+  POWERS.forEach((p, i) => {
+    const fig = document.createElement('figure');
+    fig.className = 'gallery__item';
+    fig.style.margin = '0';
+
+    const card = document.createElement('div');
+    card.className = 'card card--mini';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `Open ${p.name}, ${p.title}`);
+    card.innerHTML = CARDS.renderCard(p, { id: 'g' + i });
+    const sheen = document.createElement('div');
+    sheen.className = 'card__sheen';
+    const grain = document.createElement('div');
+    grain.className = 'card__grain';
+    card.append(sheen, grain);
+
+    const cap = document.createElement('figcaption');
+    cap.innerHTML = `<b>${String(p.n).padStart(2, '0')} · ${p.name}</b>${p.domain}`;
+
+    fig.append(card, cap);
+    grid.appendChild(fig);
+
+    const open = () => openDialog(p);
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+    });
+
+    // subtle tilt
+    if (typeof window.matchMedia === 'function' &&
+        window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      card.addEventListener('pointermove', e => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+        card.style.setProperty('--rx', ((.5 - py) * 12).toFixed(2) + 'deg');
+        card.style.setProperty('--ry', ((px - .5) * 12).toFixed(2) + 'deg');
+        card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+        card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+      });
+      card.addEventListener('pointerleave', () => {
+        card.style.setProperty('--rx', '0deg');
+        card.style.setProperty('--ry', '0deg');
+      });
+    }
+  });
+
+  /* ---------- dialog ---------- */
+  const dlg = $('#power-dialog');
+  function openDialog(p) {
+    const host = $('#dialog-card');
+    host.innerHTML = CARDS.renderCard(p, { id: 'dlg' + p.n });
+    const sheen = document.createElement('div');
+    sheen.className = 'card__sheen';
+    const grain = document.createElement('div');
+    grain.className = 'card__grain';
+    host.append(sheen, grain);
+
+    $('#dialog-domain').textContent = p.domain;
+    $('#dialog-name').textContent = p.name;
+    $('#dialog-title').textContent = p.title;
+    $('#dialog-desc').textContent = p.desc;
+    $('#dialog-vision').textContent = p.vision;
+
+    const combos = [];
+    ['A', 'B', 'C', 'D'].forEach(q1 => ['A', 'B', 'C', 'D'].forEach(q2 => ['A', 'B', 'C', 'D'].forEach(q3 => {
+      if (powerFor({ q1, q2, q3 }).key === p.key) combos.push(q1 + q2 + q3);
+    })));
+    $('#dialog-combos').innerHTML =
+      `${combos.length} of 64 combinations lead here: <code>${combos.join(' · ')}</code>`;
+
+    document.documentElement.style.setProperty('--accent', `rgb(${p.c1.join(',')})`);
+    document.documentElement.style.setProperty('--accent-rgb', p.c1.join(', '));
+    if (typeof dlg.showModal === 'function') dlg.showModal();
+    else dlg.setAttribute('open', '');
+    const heading = $('#dialog-name');
+    heading.setAttribute('tabindex', '-1');
+    heading.focus();
+  }
+  $('#dialog-close').addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', e => {
+    if (e.target === dlg) dlg.close();
+  });
+  dlg.addEventListener('close', () => {
+    document.documentElement.style.setProperty('--accent', '#e6c88b');
+    document.documentElement.style.setProperty('--accent-rgb', '230, 200, 139');
+  });
+
+  /* ---------- lookup ---------- */
+  const picks = { q1: 'A', q2: 'A', q3: 'A' };
+  const rows = $('#lookup-rows');
+  rows.innerHTML = QUESTIONS.map((q, qi) => `
+    <div class="lookup__row">
+      <span>Q${qi + 1}. ${q.short}</span>
+      <div class="seg" role="group" aria-label="${q.prompt}">
+        ${q.options.map(o => `
+          <button type="button" data-q="${q.id}" data-k="${o.key}" aria-pressed="false" title="${o.label}">
+            <b>${o.key}</b>${o.label.replace(/\.$/, '')}
+          </button>`).join('')}
+      </div>
+    </div>`).join('');
+
+  function paintLookup() {
+    rows.querySelectorAll('button').forEach(b => {
+      b.setAttribute('aria-pressed', String(picks[b.dataset.q] === b.dataset.k));
+    });
+    const p = powerFor(picks);
+    const idx = powerIndex(picks);
+    document.documentElement.style.setProperty('--accent', `rgb(${p.c1.join(',')})`);
+    document.documentElement.style.setProperty('--accent-rgb', p.c1.join(', '));
+    $('#lookup-result').innerHTML = `
+      <span class="idx">INDEX ${String(idx).padStart(2, '0')}/16</span>
+      <strong>${p.name}</strong><em>${p.title}</em>
+      <code>1 + ((5·${window.SUPERPOWERS.VALUE[picks.q1]} + 3·${window.SUPERPOWERS.VALUE[picks.q2]} + 7·${window.SUPERPOWERS.VALUE[picks.q3]}) mod 16) = ${idx}</code>
+      <a class="btn btn--sm btn--ghost" href="#" id="lookup-open">Open this card</a>`;
+    $('#lookup-open').addEventListener('click', e => { e.preventDefault(); openDialog(p); });
+  }
+  rows.addEventListener('click', e => {
+    const b = e.target.closest('button[data-q]');
+    if (!b) return;
+    picks[b.dataset.q] = b.dataset.k;
+    paintLookup();
+  });
+  paintLookup();
+
+  /* toast helper */
+  window.__toast = function () {};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+/* ============================================================
+   Card — the collectible reveal object.
+   Tilt + holo sheen are driven by CSS custom properties that
+   app.js updates on pointer move (and resets to rest values).
+   ============================================================ */
+
+.card {
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 40%;
+  position: relative;
+  display: block;
+  border-radius: 26px;
+  transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform .5s var(--ease), box-shadow .5s var(--ease), filter .5s var(--ease);
+  box-shadow:
+    0 46px 90px -46px rgba(0, 0, 0, .95),
+    0 0 0 1px rgba(255, 255, 255, .06),
+    0 0 60px -22px rgba(var(--accent-rgb), .55);
+  will-change: transform;
+  isolation: isolate;
+}
+
+.card__svg { display: block; width: 100%; height: auto; border-radius: 26px; }
+
+/* holo sheen — follows the pointer, sells the foil */
+.card__sheen {
+  position: absolute; inset: 0; border-radius: 26px; pointer-events: none;
+  background:
+    radial-gradient(38% 30% at var(--mx) var(--my), rgba(255, 255, 255, .3), transparent 70%),
+    linear-gradient(118deg,
+      rgba(255, 255, 255, 0) 34%,
+      rgba(var(--accent-rgb), .22) 46%,
+      rgba(255, 255, 255, .3) 50%,
+      rgba(var(--accent-rgb), .18) 55%,
+      rgba(255, 255, 255, 0) 68%);
+  mix-blend-mode: screen;
+  opacity: .5;
+  transition: opacity .4s var(--ease);
+}
+.card:hover .card__sheen { opacity: .9; }
+
+/* fine engraved texture */
+.card__grain {
+  position: absolute; inset: 0; border-radius: 26px; pointer-events: none;
+  background-image: repeating-linear-gradient(
+    62deg, rgba(255, 255, 255, .045) 0 1px, transparent 1px 4px);
+  opacity: .5; mix-blend-mode: overlay;
+}
+
+/* the glow that sits behind the card */
+/* tilt affordance on devices with a real pointer */
+@media (hover: hover) and (pointer: fine) {
+  .card { cursor: grab; }
+  .card.is-tilting { transition: transform .08s linear, box-shadow .5s var(--ease); cursor: grabbing; }
+}
+
+/* mini flavour for hero stack / gallery thumbs */
+.card--mini { box-shadow: 0 30px 60px -30px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.06); }
+.card--mini .card__sheen, .card--mini .card__grain { opacity: .35; }
+
+/* gallery */
+.gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: clamp(16px, 2.2vw, 30px);
+}
+.gallery__item { display: grid; gap: 10px; justify-items: center; }
+.gallery__item figcaption {
+  font-size: 11px; letter-spacing: .24em; text-transform: uppercase;
+  color: var(--muted-dim); text-align: center;
+}
+.gallery__item figcaption b { display: block; color: var(--paper); letter-spacing: .18em; margin-bottom: 3px; }
+
+/* ============================================================
+   Print — the deck as physical cards.
+   Two per row, no page break inside a card.
+   ============================================================ */
+@media print {
+  @page { size: A4 portrait; margin: 12mm; }
+
+  .card {
+    box-shadow: none !important;
+    transform: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .card__sheen, .card__grain { display: none !important; }
+
+  .gallery__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8mm;
+  }
+  .gallery__item { break-inside: avoid; page-break-inside: avoid; }
+  .gallery__item figcaption {
+    color: #333 !important;
+    font-size: 8pt;
+  }
+  .gallery__item figcaption b { color: #111 !important; }
+
+  /* the SVG art keeps its own dark background, so give it a hairline
+     border to survive light printers */
+  .card__svg { border: 1px solid #d8d8d8; border-radius: 4mm; }
+}
