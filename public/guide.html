@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Facilitator Guide — SUPERPOWER</title>
+<meta name="description" content="How to run SUPERPOWER as a 10–15 minute kumustahan activity: script, timing, the reveal formula, and the closing twist.">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#05060d">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .doc { padding: clamp(30px, 5vh, 60px) 0 100px; }
+  .doc__head { max-width: 70ch; margin-bottom: clamp(30px, 5vh, 54px); }
+  .doc__head h1 { font-size: clamp(32px, 5vw, 54px); margin: 12px 0 14px; }
+  .doc__head p { font-family: var(--quote); font-style: italic; font-size: clamp(18px, 2vw, 22px); color: #cbc6bb; margin: 0; }
+
+  .doc-grid { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+  .toc { position: sticky; top: 88px; }
+  .toc ol { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 2px; counter-reset: toc; }
+  .toc a {
+    display: block; padding: 7px 10px; border-radius: 8px; font-size: 13px;
+    color: var(--muted); text-decoration: none; border-left: 1px solid rgba(255,255,255,.1);
+    transition: all .2s;
+  }
+  .toc a:hover { color: var(--paper); background: rgba(255,255,255,.05); border-left-color: var(--gold); }
+
+  .doc-body > section { margin-bottom: clamp(36px, 6vh, 62px); scroll-margin-top: 84px; }
+  .doc-body h2 {
+    font-size: clamp(23px, 3vw, 31px); margin: 0 0 6px; display: flex; align-items: baseline; gap: 14px;
+  }
+  .doc-body h2 .num {
+    font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: .28em;
+    color: var(--gold); opacity: .8; flex: none; padding-top: 4px;
+  }
+  .doc-body h3 { font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); margin: 28px 0 10px; }
+  .doc-body p { color: #c2bfb3; line-height: 1.72; max-width: 72ch; }
+  .doc-body p + p { margin-top: 12px; }
+  .doc-body strong { color: #fff8ea; }
+  .doc-body em { color: var(--gold); font-style: italic; }
+
+  .script {
+    border-left: 2px solid rgba(var(--accent-rgb), .6); padding: 4px 0 4px 20px; margin: 18px 0 22px;
+    font-family: var(--quote); font-size: 19px; line-height: 1.62; color: #ded8cb;
+  }
+  .script p { margin: 0 0 12px; max-width: 66ch; color: inherit; font: inherit; }
+  .script p:last-child { margin-bottom: 0; }
+  .script .cue {
+    display: inline-block; font-family: var(--sans); font-style: normal; font-size: 10px; font-weight: 600;
+    letter-spacing: .26em; text-transform: uppercase; color: var(--muted-dim); margin-bottom: 8px;
+  }
+
+  .table-wrap { overflow-x: auto; margin: 18px 0 22px; border: 1px solid rgba(255,255,255,.1); border-radius: 14px; }
+  table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 14px; }
+  caption { caption-side: top; text-align: left; padding: 14px 16px 10px; font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted-dim); }
+  th, td { text-align: left; padding: 11px 16px; border-top: 1px solid rgba(255,255,255,.07); vertical-align: top; }
+  th { font-weight: 600; color: var(--gold); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; background: rgba(255,255,255,.03); }
+  td { color: #c5c2b7; }
+  td code, td b { color: #fff6e4; }
+  tbody tr:hover td { background: rgba(255,255,255,.025); }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px;
+    background: rgba(255,255,255,.06); padding: 2px 6px; border-radius: 5px; color: #e6dfcc;
+  }
+
+  .formula {
+    margin: 18px 0; padding: 22px 24px; border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.03);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 15px;
+    color: #fff2d8; overflow-x: auto; letter-spacing: .02em;
+  }
+  .formula .dim { color: #8e8b9c; }
+
+  .cards-mini {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px; margin: 18px 0 8px;
+  }
+  .cards-mini span {
+    display: block; font-size: 12.5px; color: #b6b3c4; padding: 9px 12px;
+    border-radius: 9px; border: 1px solid rgba(255,255,255,.09); background: rgba(255,255,255,.025);
+  }
+  .cards-mini span b { color: #fff4e0; font-family: var(--display); font-size: 11.5px; letter-spacing: .1em; margin-right: 6px; }
+
+  .callout {
+    padding: 18px 20px; border-radius: 14px; margin: 20px 0;
+    border: 1px solid rgba(var(--accent-rgb), .3); background: rgba(var(--accent-rgb), .06);
+    color: #ded9cb; font-size: 14.5px; line-height: 1.65;
+  }
+  .callout b { color: #fff7e6; }
+  .callout--violet { border-color: rgba(154,123,255,.32); background: rgba(154,123,255,.07); }
+
+  .timeline { list-style: none; margin: 20px 0; padding: 0; display: grid; gap: 0; }
+  .timeline li {
+    display: grid; grid-template-columns: 82px 1fr; gap: 18px; padding: 14px 0;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+  .timeline li:last-child { border-bottom: 1px solid rgba(255,255,255,.08); }
+  .timeline .t { font-family: var(--display); font-size: 12.5px; letter-spacing: .16em; color: var(--gold); padding-top: 3px; }
+  .timeline .what { font-size: 14.5px; color: #c5c2b7; line-height: 1.6; }
+  .timeline .what b { color: #fdf3e0; display: block; margin-bottom: 2px; font-weight: 600; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+  .chip {
+    font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--gold);
+    border: 1px solid rgba(230,200,139,.3); border-radius: 999px; padding: 5px 12px;
+  }
+
+  .doc-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+
+  @media (max-width: 860px) {
+    .doc-grid { grid-template-columns: 1fr; }
+    .toc { position: static; }
+    .toc ol { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  }
+  @media print {
+    .topbar, .footer, .toc, .doc-actions { display: none !important; }
+    .doc-grid { grid-template-columns: 1fr; }
+    .script { break-inside: avoid; }
+    .doc-body > section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <a class="brand" href="index.html">SUPERPOWER <span>Kumustahan</span></a>
+    <nav aria-label="Main">
+      <a href="index.html">Play</a>
+      <a href="gallery.html"><span class="lg-only">The 16 </span>Powers</a>
+      <a href="guide.html" aria-current="page"><span class="lg-only">Facilitator </span>Guide</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap doc">
+    <div class="doc__head">
+      <p class="eyebrow">Facilitator guide · 10–15 minutes</p>
+      <h1>Running the kumustahan</h1>
+      <p>Everything you need to open the room, hold the silence, reveal the powers, and land the ending.</p>
+    </div>
+
+    <div class="doc-grid">
+      <nav class="toc" aria-label="On this page">
+        <p class="eyebrow">Contents</p>
+        <ol>
+          <li><a href="#before">Before you start</a></li>
+          <li><a href="#run">The run sheet</a></li>
+          <li><a href="#opening">The opening spiel</a></li>
+          <li><a href="#questions">The three questions</a></li>
+          <li><a href="#formula">The reveal formula</a></li>
+          <li><a href="#dealing">Dealing the cards</a></li>
+          <li><a href="#reflect">The reflection</a></li>
+          <li><a href="#twist">The final twist</a></li>
+          <li><a href="#closing">The closing line</a></li>
+          <li><a href="#safety">Holding the room</a></li>
+          <li><a href="#print">Print &amp; offline</a></li>
+        </ol>
+      </nav>
+
+      <div class="doc-body">
+
+        <section id="before">
+          <h2><span class="num">01</span> Before you start</h2>
+          <p>
+            This activity asks people to name what they wish they could change — in their own lives, and in the
+            world. That is a real question, and some participants will answer it honestly about hard things.
+            Set the tone before you begin: <strong>no one has to explain an answer, and no one is diagnosed by a card.</strong>
+          </p>
+
+          <h3>What you need</h3>
+          <div class="chips">
+            <span class="chip">One device per person (ideal)</span>
+            <span class="chip">Or one shared screen</span>
+            <span class="chip">Or printed cards</span>
+            <span class="chip">A timer</span>
+          </div>
+          <p>
+            Nothing needs installing or signing up for. The activity is a single web page that runs entirely offline —
+            no answers are sent anywhere, and reflections are saved only in the participant's own browser.
+            If people are on phones, they can simply open the link.
+          </p>
+
+          <div class="callout">
+            <b>One shared screen?</b> Run the page on the projector and let the room answer by show of hands
+            for each question — count the majority per question (A/B/C/D), then reveal the power the room chose together.
+            It lands well as a group verdict.
+          </div>
+        </section>
+
+        <section id="run">
+          <h2><span class="num">02</span> The run sheet</h2>
+          <p>The whole thing fits in a quarter of an hour. Here is where the time goes.</p>
+          <ul class="timeline">
+            <li><span class="t">0:00</span><div class="what"><b>Opening</b>Read the spiel. Keep it slow; let the last line sit.</div></li>
+            <li><span class="t">0:02</span><div class="what"><b>Three questions</b>Participants answer on their own. Do not explain the answers while they choose.</div></li>
+            <li><span class="t">0:05</span><div class="what"><b>The reveal</b>The page runs its short awakening sequence, then shows the card. Give ten seconds of silence before you speak.</div></li>
+            <li><span class="t">0:07</span><div class="what"><b>Reflection writing</b>Use the on-screen 2-minute timer. Four statements, written privately.</div></li>
+            <li><span class="t">0:09</span><div class="what"><b>Sharing round</b>Optional. Two or three volunteers read only what they want to read.</div></li>
+            <li><span class="t">0:12</span><div class="what"><b>The twist</b>One thing you can already do today, without the power.</div></li>
+            <li><span class="t">0:14</span><div class="what"><b>Closing line</b>End on the quote. Do not add a lecture after it.</div></li>
+          </ul>
+        </section>
+
+        <section id="opening">
+          <h2><span class="num">03</span> The opening spiel</h2>
+          <p>Read this as written the first time. It is paced for speaking aloud.</p>
+          <div class="script">
+            <span class="cue">Opening</span>
+            <p>Imagine waking up tomorrow with a superpower.</p>
+            <p>Not just any superpower, but one that reflects what you need, what you value, and what you wish you could change in the world today.</p>
+            <p>Maybe you want to protect someone. Maybe you want to escape from everything for a while. Maybe you want to fight injustice, heal people, or simply have enough time to breathe.</p>
+            <p>In this activity, you will answer three simple questions. Your answers will be combined to reveal a superpower that you will carry for the rest of this activity.</p>
+            <p>Once you discover your power, think about this: <em>if you had this power today, where would you use it, who would you use it for, and what would you change?</em></p>
+            <p>There are no wrong answers. Your power is yours to define.</p>
+          </div>
+        </section>
+
+        <section id="questions">
+          <h2><span class="num">04</span> The three questions</h2>
+          <p>Four choices each. Participants choose only one answer per question.</p>
+
+          <div class="table-wrap">
+            <table>
+              <caption>Question 1 · If you could change one thing in your life right now, what would it be?</caption>
+              <thead><tr><th>Answer</th><th>Value</th><th>Choice</th></tr></thead>
+              <tbody>
+                <tr><td><b>A</b></td><td>0</td><td>Protect myself and the people I care about.</td></tr>
+                <tr><td><b>B</b></td><td>1</td><td>Change something unfair in the world.</td></tr>
+                <tr><td><b>C</b></td><td>2</td><td>Understand people and be understood.</td></tr>
+                <tr><td><b>D</b></td><td>3</td><td>Find peace and escape from overwhelming situations.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <caption>Question 2 · What do you think people need the most today?</caption>
+              <thead><tr><th>Answer</th><th>Value</th><th>Choice</th></tr></thead>
+              <tbody>
+                <tr><td><b>A</b></td><td>0</td><td>Safety and protection.</td></tr>
+                <tr><td><b>B</b></td><td>1</td><td>Justice and freedom.</td></tr>
+                <tr><td><b>C</b></td><td>2</td><td>Healing and compassion.</td></tr>
+                <tr><td><b>D</b></td><td>3</td><td>Hope and solidarity.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <caption>Question 3 · If you could give yourself one gift, what would it be?</caption>
+              <thead><tr><th>Answer</th><th>Value</th><th>Choice</th></tr></thead>
+              <tbody>
+                <tr><td><b>A</b></td><td>0</td><td>Courage to face anything.</td></tr>
+                <tr><td><b>B</b></td><td>1</td><td>The ability to make things right.</td></tr>
+                <tr><td><b>C</b></td><td>2</td><td>The chance to start over.</td></tr>
+                <tr><td><b>D</b></td><td>3</td><td>The strength to keep going.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="formula">
+          <h2><span class="num">05</span> The reveal formula</h2>
+          <p>
+            The superpower is not decided by one answer. It is decided by the combination — which is why changing
+            even one answer changes the card a participant receives.
+          </p>
+          <p>Assign each answer a value: <code>A = 0</code>, <code>B = 1</code>, <code>C = 2</code>, <code>D = 3</code>. Then:</p>
+          <div class="formula">
+            Power Index = 1 + ((5·Q1 + 3·Q2 + 7·Q3) <span class="dim">mod</span> 16)
+          </div>
+          <p>
+            The result is a number from 1 to 16, and each number is one of the powers below.
+            That gives <strong>64 possible answer combinations</strong> mapping onto <strong>16 powers</strong>.
+            The weights (5, 3, 7) mean every question matters, and every question can flip the outcome.
+          </p>
+
+          <div class="callout callout--violet">
+            <b>Why the odds aren't even.</b> Some powers sit on five combinations, others on three.
+            That is a natural result of the modulo — not a bias you need to fix. If a participant asks,
+            it is a good excuse to say: the point is not the arithmetic, it is what you do with what you got.
+          </div>
+
+          <h3>The full mapping</h3>
+          <div class="table-wrap">
+            <table id="formula-table">
+              <caption>Power index → power → combinations that reach it</caption>
+              <thead><tr><th>Index</th><th>Power</th><th>Combinations</th><th>Count</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p style="font-size:13px;color:var(--muted-dim)">
+            A combination is written <code>Q1Q2Q3</code> — for example <code>BCD</code> means Q1 = B, Q2 = C, Q3 = D.
+          </p>
+        </section>
+
+        <section id="dealing">
+          <h2><span class="num">06</span> Dealing the cards</h2>
+          <p>Don't simply announce the powers. Make the reveal an experience.</p>
+          <div class="script">
+            <span class="cue">Before the reveal</span>
+            <p>Your answers have been processed. Your choices have revealed something about the power you carry.
+              But remember, a superpower is only as meaningful as the way you choose to use it.</p>
+          </div>
+          <p>
+            Then let them see their card. Give the room ten seconds of quiet to actually read it before anyone
+            comments. When you do speak, ask the small questions first:
+          </p>
+          <p>
+            <em>Did the card surprise you?</em> · <em>Would you have chosen this power yourself?</em> ·
+            <em>Which part of the description sounds most like you?</em>
+          </p>
+          <p class="eyebrow" style="margin-top:26px">The sixteen</p>
+          <div class="cards-mini" id="cards-mini"></div>
+          <div class="doc-actions">
+            <a class="btn btn--sm" href="gallery.html">Open the full deck</a>
+          </div>
+        </section>
+
+        <section id="reflect">
+          <h2><span class="num">07</span> The reflection</h2>
+          <p>Give one to two minutes of quiet writing. The page has a timer built in.</p>
+          <p class="eyebrow" style="margin-top:22px">My superpower, my purpose</p>
+          <div class="script">
+            <p>1. My superpower is __________.</p>
+            <p>2. I would use it in __________.</p>
+            <p>3. I need this power because __________.</p>
+            <p>4. If I could change one thing using this power, it would be __________.</p>
+          </div>
+          <p>Encourage participants to connect their answers to two dimensions:</p>
+          <ul style="color:#c2bfb3;line-height:1.7;max-width:72ch">
+            <li><strong>Personal life.</strong> Family, friendships, studies, personal struggles, mental space, and aspirations.</li>
+            <li><strong>The world we live in.</strong> Poverty, inequality, discrimination, lack of opportunities,
+              suppression of voices, injustice, and other forms of deprivation.</li>
+          </ul>
+          <div class="callout">
+            <b>Sharing is opt-in.</b> Ask for volunteers, never names in sequence. Invite people to read only the
+            line they are comfortable reading, and to pass without explaining.
+          </div>
+        </section>
+
+        <section id="twist">
+          <h2><span class="num">08</span> The final twist</h2>
+          <p>End the activity with this question, and give it real air:</p>
+          <div class="script">
+            <span class="cue">The turn</span>
+            <p>After discovering your superpower, what is one thing you can already do today without having that power?</p>
+          </div>
+          <p>
+            This matters because the activity should not end with an imaginary ability. It should help people
+            recognise that some of the things they wish they could do are already within their capacity —
+            even if they cannot solve everything alone.
+          </p>
+          <p>
+            If the room is quiet, seed it with scale: <em>a message, a boundary, a question asked, a person checked on,
+            a space made safer, a small thing refused.</em>
+          </p>
+        </section>
+
+        <section id="closing">
+          <h2><span class="num">09</span> The closing line</h2>
+          <p>Read it once, slowly, and then stop.</p>
+          <div class="script">
+            <span class="cue">Closing</span>
+            <p>Maybe we cannot stop time, heal every wound, rewrite reality, or protect everyone from everything.
+              But we can choose to listen, speak up, help someone, stand with others, and make things a little better.</p>
+            <p>Sometimes, the world doesn't need another superhero. It needs ordinary people who refuse to be indifferent.</p>
+          </div>
+        </section>
+
+        <section id="safety">
+          <h2><span class="num">10</span> Holding the room</h2>
+          <p>
+            A kumustahan asks <em>how are you</em> — and sometimes the honest answer is heavy.
+            A few things that keep the activity safe:
+          </p>
+          <ul style="color:#c2bfb3;line-height:1.75;max-width:72ch">
+            <li><strong>Cards are not diagnoses.</strong> Say it out loud. A power describes what someone reaches for,
+              not who they are.</li>
+            <li><strong>No forced disclosure.</strong> Writing is private and stays on the device; sharing is a choice.</li>
+            <li><strong>Watch the quiet ones.</strong> Someone choosing “find peace and escape” twice may be telling you
+              something. Follow up privately afterwards, not in front of the room.</li>
+            <li><strong>Don't rescue too fast.</strong> If someone shares something hard, thank them before you reframe it.</li>
+            <li><strong>Know your referral.</strong> If your context has a counsellor or guidance office, mention it at
+              the start so the door is visibly open all the way through.</li>
+          </ul>
+        </section>
+
+        <section id="print">
+          <h2><span class="num">11</span> Print &amp; offline</h2>
+          <p>
+            The activity works with no internet at all — it's a static page with no external requests.
+            If you need a paper version, this guide prints cleanly (the reveal table and the scripts survive the
+            printer), and the deck on <a href="gallery.html">the 16 powers</a> can be printed card by card.
+          </p>
+          <p>
+            For a fully offline session, save this folder to a laptop or a USB stick and open
+            <code>index.html</code> in any browser. Participants' answers stay on whichever device they used.
+          </p>
+          <div class="doc-actions">
+            <button class="btn btn--sm" type="button" onclick="window.print()">Print this guide</button>
+            <a class="btn btn--sm btn--gold" href="index.html">Run the activity</a>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <span>SUPERPOWER · A kumustahan activity · Works offline</span>
+    <nav aria-label="Footer">
+      <a href="index.html">Play</a>
+      <a href="gallery.html">The 16 powers</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="superpowers.js"></script>
+<script>
+(function () {
+  const { POWERS, powerFor, powerIndex } = window.SUPERPOWERS;
+
+  /* mapping table */
+  const tbody = document.querySelector('#formula-table tbody');
+  tbody.innerHTML = POWERS.map(p => {
+    const combos = [];
+    ['A', 'B', 'C', 'D'].forEach(q1 => ['A', 'B', 'C', 'D'].forEach(q2 => ['A', 'B', 'C', 'D'].forEach(q3 => {
+      if (powerFor({ q1, q2, q3 }).key === p.key) combos.push(q1 + q2 + q3);
+    })));
+    return `<tr>
+      <td><code>${String(p.n).padStart(2, '0')}</code></td>
+      <td><b>${p.name}</b> <span style="color:#8e8b9c">· ${p.title}</span><br>
+          <span style="font-size:11.5px;letter-spacing:.2em;color:#8e8b9c">${p.domain}</span></td>
+      <td><code>${combos.join('</code> <code>')}</code></td>
+      <td>${combos.length}</td>
+    </tr>`;
+  }).join('');
+
+  /* mini deck list */
+  document.getElementById('cards-mini').innerHTML = POWERS.map(p =>
+    `<span><b>${String(p.n).padStart(2, '0')}</b>${p.name} · ${p.title}</span>`).join('');
+})();
+</script>
+</body>
+</html>
