@@ -115,10 +115,12 @@ public/
   icons/                app icons
 serve.js                zero-dependency static server
 test/smoke.js           drives the real pages in jsdom
+test/restore.js         the "welcome back" path across two visits
 test/a11y.js            axe-core audit of every screen
-tools/render-deck.js    renders the deck + contact sheet to build/
+tools/render-deck.js    renders the deck + contact sheet (default build/)
 tools/sync-fonts.js     copies the needed fonts out of node_modules
-assets/deck/            pre-rendered cards
+assets/deck/            pre-rendered cards (760×1064)
+assets/deck-all-powers.png   the whole deck on one sheet
 ```
 
 Data, rendering and behaviour are deliberately separate: `superpowers.js` has no
@@ -138,11 +140,16 @@ service worker caches only the app's own files.
 ## Development
 
 ```bash
-npm test              # 56 checks: formula, cards, the full participant flow, export, gallery, guide
-node test/a11y.js     # axe-core audit; currently 0 violations across all 7 screens
-node tools/render-deck.js --svg   # regenerate assets/deck (PNGs + source SVGs in build/)
-node tools/sync-fonts.js          # re-copy fonts if you change the font set
+npm test              # 68 checks: formula, cards, the participant flow, export,
+                      # gallery, guide, and the return-visit restore path
+npm run test:a11y     # axe-core audit; currently 0 violations across all 7 screens
+npm run deck          # regenerate assets/deck (PNGs) — add --svg to keep sources
+npm run fonts         # re-copy fonts out of node_modules if the font set changes
 ```
+
+The deck renderer decompresses the woff2 fonts to TTF first, because the
+rasteriser can't read woff2 and would otherwise silently substitute its own
+fonts. That is why the committed cards match the live page.
 
 The smoke test boots the real server, loads the real pages in jsdom, and plays the
 activity the way a participant would.

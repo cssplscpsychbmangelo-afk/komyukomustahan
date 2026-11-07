@@ -1,14 +1,19 @@
 #!/usr/bin/env node
-/* Renders all sixteen cards plus a contact sheet to static files.
+/* Renders all sixteen cards, plus a contact sheet, to PNG.
 
-   Use it to print the deck, drop the art into slides, or check the
-   whole deck at a glance after changing a colour or sigil.
+   Use it to print the deck, drop art into slides, or check the whole
+   deck at a glance after changing a colour or a sigil.
 
      node tools/render-deck.js            -> build/deck/*.png + build/deck.png
-     node tools/render-deck.js --svg      -> also keep the source SVGs
+     node tools/render-deck.js --svg      -> keep the source SVGs too
+     node tools/render-deck.js --out assets/deck   -> write somewhere else
 
-   Needs `sharp` (devDependency). Output goes to build/, which is
-   git-ignored — cards are generated, not committed.
+   The card art borrows the page's fonts, so they are decompressed from
+   public/fonts (woff2) to TTF and embedded before rasterising — otherwise
+   the renderer silently substitutes its own fonts and the cards look wrong.
+
+   Needs `sharp` and `wawoff2` (devDependencies). Output defaults to
+   build/, which is git-ignored; assets/deck/ is the committed copy.
 */
 'use strict';
 
@@ -19,47 +24,87 @@ const sharp = require('sharp');
 const ROOT = path.join(__dirname, '..');
 const SP = require(path.join(ROOT, 'public', 'superpowers.js'));
 const CARDS = require(path.join(ROOT, 'public', 'cards.js'));
+const EXPORT = require(path.join(ROOT, 'public', 'export.js'));
 
-const OUT = path.join(ROOT, 'build');
+const args = process.argv.slice(2);
+const keepSvg = args.includes('--svg');
+const outArg = args.indexOf('--out');
+const OUT = path.join(ROOT, outArg >= 0 ? args[outArg + 1] : 'build');
+
 const DECK = path.join(OUT, 'deck');
-const CARD_W = 900;
+const CARD_W = 760;
 const CARD_H = Math.round(CARD_W * (CARDS.H / CARDS.W));
-const keepSvg = process.argv.includes('--svg');
+const THUMB_W = 400;
+const THUMB_H = Math.round(THUMB_W * (CARDS.H / CARDS.W));
+
+/* ---------- fonts ---------- */
+async function fontFetch() {
+  let wawoff2;
+  try { wawoff2 = require('wawoff2'); } catch (e) { wawoff2 = null; }
+  if (!wawoff2) {
+    console.warn('  ! wawoff2 not installed — cards will render in fallback fonts');
+    return null;
+  }
+  const cache = new Map();
+  return async url => {
+    const src = path.join(ROOT, 'public', url);
+    if (!cache.has(src)) cache.set(src, await wawoff2.decompress(fs.readFileSync(src)));
+    const ttf = cache.get(src);
+    return {
+      ok: true,
+      arrayBuffer: async () => ttf.buffer.slice(ttf.byteOffset, ttf.byteOffset + ttf.byteLength)
+    };
+  };
+}
+
+/* sharp can't read woff2, so swap the embedded format to truetype */
+function forSharp(svg) {
+  return svg
+    .replace(/data:font\/woff2;base64,/g, 'data:font/ttf;base64,')
+    .replace(/format\('woff2'\)/g, "format('truetype')");
+}
 
 async function main() {
   fs.mkdirSync(DECK, { recursive: true });
 
+  const fetchImpl = await fontFetch();
   const tiles = [];
+
   for (const power of SP.POWERS) {
-    const svg = CARDS.renderCard(power, { id: 'deck-' + power.n });
+    const svg = await EXPORT.buildSvg(power, CARDS, { fetchImpl, id: 'deck-' + power.n });
     if (keepSvg) {
-      fs.writeFileSync(path.join(DECK, String(power.n).padStart(2, '0') + '-' + power.key + '.svg'), svg);
+      fs.writeFileSync(
+        path.join(DECK, String(power.n).padStart(2, '0') + '-' + power.key + '.svg'),
+        svg);
     }
-    const png = await sharp(Buffer.from(svg)).resize(CARD_W, CARD_H).png().toBuffer();
+    const png = await sharp(Buffer.from(forSharp(svg)))
+      .resize(CARD_W, CARD_H)
+      .png({ palette: true, colours: 220, effort: 9, dither: 0.6, compressionLevel: 9 })
+      .toBuffer();
     const name = String(power.n).padStart(2, '0') + '-' + power.key + '.png';
     fs.writeFileSync(path.join(DECK, name), png);
     tiles.push(png);
-    process.stdout.write('  ' + name + '\n');
+    process.stdout.write('  ' + name + '  ' + Math.round(png.length / 1024) + 'KB\n');
   }
 
   /* contact sheet, 4 x 4 */
-  const cols = 4, gap = 24, thumbW = 420, thumbH = Math.round(thumbW * (CARDS.H / CARDS.W));
-  const thumbs = await Promise.all(tiles.map(t => sharp(t).resize(thumbW, thumbH).png().toBuffer()));
-  const width = cols * thumbW + (cols + 1) * gap;
+  const cols = 4, gap = 22;
+  const thumbs = await Promise.all(tiles.map(t => sharp(t).resize(THUMB_W, THUMB_H).png().toBuffer()));
   const rows = Math.ceil(thumbs.length / cols);
-  const height = rows * thumbH + (rows + 1) * gap;
+  const width = cols * THUMB_W + (cols + 1) * gap;
+  const height = rows * THUMB_H + (rows + 1) * gap;
 
   await sharp({ create: { width, height, channels: 3, background: '#0a0b12' } })
     .composite(thumbs.map((t, i) => ({
       input: t,
-      left: gap + (i % cols) * (thumbW + gap),
-      top: gap + Math.floor(i / cols) * (thumbH + gap)
+      left: gap + (i % cols) * (THUMB_W + gap),
+      top: gap + Math.floor(i / cols) * (THUMB_H + gap)
     })))
-    .png()
-    .toFile(path.join(OUT, 'deck.png'));
+    .png({ palette: true, colours: 220, effort: 9, dither: 0.5 })
+    .toFile(path.join(OUT, 'deck-all-powers.png'));
 
-  console.log('\n  build/deck/ (' + SP.POWERS.length + ' cards, ' + CARD_W + 'x' + CARD_H + ')');
-  console.log('  build/deck.png (contact sheet ' + width + 'x' + height + ')');
+  console.log(`\n  ${path.relative(ROOT, DECK)}/ — ${SP.POWERS.length} cards at ${CARD_W}x${CARD_H}`);
+  console.log(`  ${path.relative(ROOT, path.join(OUT, 'deck-all-powers.png'))} — ${width}x${height}`);
 }
 
 main().catch(e => { console.error(e); process.exit(1); });

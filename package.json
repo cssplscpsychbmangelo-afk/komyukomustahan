@@ -2,11 +2,13 @@
   "name": "komyukomustahan-superpower",
   "version": "1.0.0",
   "private": true,
-  "description": "SUPERPOWER — a 10–15 minute kumustahan activity. Three questions, sixteen powers, sixty-four combinations.",
+  "description": "SUPERPOWER \u2014 a 10\u201315 minute kumustahan activity. Three questions, sixteen powers, sixty-four combinations.",
   "scripts": {
     "start": "node serve.js",
     "dev": "node serve.js 8000",
-    "test": "node test/smoke.js",
+    "test": "node test/smoke.js && node test/restore.js",
+    "test:a11y": "node test/a11y.js",
+    "deck": "node tools/render-deck.js --out assets",
     "fonts": "node tools/sync-fonts.js"
   },
   "devDependencies": {
@@ -14,6 +16,9 @@
     "@fontsource/cormorant-garamond": "^5.0.0",
     "@fontsource/inter": "^5.0.0",
     "jsdom": "^25.0.0",
-    "sharp": "^0.33.0"
+    "sharp": "^0.33.0",
+    "wawoff2": "^1.0.2",
+    "axe-core": "^4.10.0",
+    "fontkit": "^2.0.2"
   }
 }

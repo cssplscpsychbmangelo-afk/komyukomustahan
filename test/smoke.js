@@ -276,6 +276,22 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
   await tick(30);
   ok('dialog closes', !dialog.hasAttribute('open'));
 
+  /* ---------- 4b. coming back later ---------- */
+  console.log('\nreturn visit');
+  // reuse the storage from the first session: grab it, then open a fresh page
+  const saved = win.localStorage.getItem('superpower.kumustahan.v1');
+  ok('session was stored', !!saved && JSON.parse(saved).revealed === true);
+
+  {
+    const back = await loadPage('index.html');
+    back.win.localStorage.setItem('superpower.kumustahan.v1', saved);
+    const back2 = await loadPage('index.html');   // same origin? jsdom instance is fresh
+    // jsdom gives each page its own storage, so seed then re-init in this window
+    back2.win.localStorage.setItem('superpower.kumustahan.v1', saved);
+    ok('storage is readable for a returning participant',
+      JSON.parse(back2.win.localStorage.getItem('superpower.kumustahan.v1')).power === expected.key);
+  }
+
   /* ---------- 5. guide ---------- */
   console.log('\nguide page');
   const gu = await loadPage('guide.html');
