@@ -142,12 +142,38 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
   });
   ok('description lines stay inside the card', fits, 'widest ' + widest + ' chars');
 
-  // name width: Cinzel 600 at 41px is ~0.68em per char
-  const nameTooWide = SP.POWERS.filter(p => {
-    const px = p.name.length * 41 * 0.68 + (p.name.length - 1) * 2.6;
-    return px > 420 - 88;
-  }).map(p => p.name);
-  ok('power names fit inside the card', nameTooWide.length === 0, nameTooWide.join(', '));
+  /* real font metrics, not estimates — the card is 420 units wide and keeps
+     44 units of margin on each side */
+  const fontkit = require('fontkit');
+  const CARD_SAFE = 420 - 88;
+  const cinzel = fontkit.openSync(path.join(ROOT, 'fonts', 'cinzel-latin-600-normal.woff2'));
+  const cormorant = fontkit.openSync(path.join(ROOT, 'fonts', 'cormorant-garamond-latin-300-italic.woff2'));
+  const inter = fontkit.openSync(path.join(ROOT, 'fonts', 'inter-latin-400-normal.woff2'));
+  const width = (font, text, size, ls) =>
+    font.layout(text).glyphs.reduce((a, g) => a + g.advanceWidth, 0) / font.unitsPerEm * size
+    + (ls || 0) * (text.length - 1);
+
+  const namesTooWide = SP.POWERS.filter(p => width(cinzel, p.name, 50, 3) > CARD_SAFE);
+  ok('power names fit the card at 50px', namesTooWide.length === 0,
+    namesTooWide.map(p => p.name).join(', '));
+
+  const epithetsTooWide = SP.POWERS.filter(p => width(cormorant, p.title, 26, 0) > CARD_SAFE);
+  ok('epithets fit the card at 26px', epithetsTooWide.length === 0,
+    epithetsTooWide.map(p => p.title).join(', '));
+
+  const descTooWide = SP.POWERS.filter(p =>
+    CARDS.wrap(p.desc, 46).some(line => width(inter, line, 13.2, 0.1) > CARD_SAFE));
+  ok('description lines fit the card at 13.2px', descTooWide.length === 0,
+    descTooWide.map(p => p.name).join(', '));
+
+  /* the landing title is a long word in a half-width column */
+  const col = (1180 - 44 - 76) * 1.08 / 2;
+  ok('landing title fits its column', width(cinzel, 'SUPERPOWER', 64, 0.03) < col,
+    Math.round(width(cinzel, 'SUPERPOWER', 64, 0.03)) + 'px in ' + Math.round(col) + 'px');
+
+  /* the biggest reveal name must not collide with its column either */
+  const widestName = Math.max(...SP.POWERS.map(p => width(cinzel, p.name, 68, 0.06)));
+  ok('reveal heading fits its column', widestName < 560, Math.round(widestName) + 'px');
 
   /* ---------- 3. the activity in a browser ---------- */
   console.log('\nactivity page');
